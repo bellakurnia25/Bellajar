@@ -79,9 +79,14 @@ export default async function CoursePage({ params, searchParams }) {
                 : 'Masa akses kursus ini sudah berakhir.'}
             </div>
           )}
-          <a href={`mailto:${course.teacher_email}?subject=${encodeURIComponent('Pertanyaan tentang kursus: ' + course.title)}`} className="btn-outline w-full">
-            Hubungi Teacher
-          </a>
+        <a
+          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(course.teacher_email)}&su=${encodeURIComponent('Pertanyaan tentang kursus: ' + course.title)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-outline w-full"
+        >
+          Hubungi Teacher
+        </a>
         </aside>
       </div>
     );
