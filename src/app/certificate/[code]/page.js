@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { queryOne } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import PrintButton from '@/components/PrintButton';
+import Logo from '@/components/Logo';
 
 export const metadata = { title: 'Sertifikat Kelulusan – BELLAJAR' };
 
@@ -25,30 +26,37 @@ export default async function CertificatePage({ params }) {
   return (
     <div className="page">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <Link href="/profile" className="text-sm font-bold text-orange-700 hover:underline">← Kembali ke profil</Link>
+        <Link href="/profile" className="text-sm font-semibold text-brand-700 hover:underline">← Kembali ke profil</Link>
         <PrintButton />
       </div>
 
-      <div className="mx-auto max-w-4xl rounded-3xl border-[10px] border-double border-orange-600 bg-white p-8 text-center sm:p-14 print:max-w-none print:rounded-none">
-        <p className="text-2xl font-black text-orange-600">BELLAJAR</p>
-        <h1 className="mt-6 text-4xl sm:text-5xl">Sertifikat Kelulusan</h1>
-        <p className="mt-6 text-stone-600">Diberikan dengan bangga kepada</p>
-        <p className="mt-3 border-b-4 border-amber-300 pb-3 text-4xl font-black text-stone-900 sm:text-5xl">{cert.student_name}</p>
-        <p className="mt-6 text-stone-600">yang telah menyelesaikan seluruh materi kursus</p>
-        <p className="mt-2 text-2xl font-extrabold text-emerald-700 sm:text-3xl">{cert.course_title}</p>
+      <div className="hero-gradient mx-auto max-w-4xl rounded-3xl p-3 print:max-w-none print:rounded-none">
+        <div className="relative overflow-hidden rounded-2xl bg-white p-8 text-center sm:p-14">
+          <span aria-hidden="true" className="absolute left-6 top-6 text-3xl text-brand-300">✦</span>
+          <span aria-hidden="true" className="absolute right-8 top-10 text-2xl text-sky-300">✦</span>
+          <span aria-hidden="true" className="absolute bottom-8 left-10 text-2xl text-amber-300">✦</span>
+          <span aria-hidden="true" className="absolute bottom-6 right-6 text-3xl text-emerald-300">✦</span>
 
-        <div className="mt-10 grid gap-6 text-sm sm:grid-cols-3">
-          <div>
-            <p className="text-stone-500">Tanggal lulus</p>
-            <p className="font-bold">{formatDate(cert.issued_at)}</p>
-          </div>
-          <div>
-            <p className="text-stone-500">Pengajar</p>
-            <p className="font-bold">{cert.teacher_name}</p>
-          </div>
-          <div>
-            <p className="text-stone-500">Kode verifikasi</p>
-            <p className="font-mono font-bold tracking-wider">{cert.certificate_code}</p>
+          <div className="flex justify-center"><Logo size="lg" /></div>
+          <h1 className="mt-6 text-4xl sm:text-5xl">Sertifikat Kelulusan</h1>
+          <p className="mt-6 text-stone-600">Diberikan dengan bangga kepada</p>
+          <p className="mt-3 border-b-4 border-brand-300 pb-3 text-4xl font-bold text-brand-700 sm:text-5xl">{cert.student_name}</p>
+          <p className="mt-6 text-stone-600">yang telah menyelesaikan seluruh materi kursus</p>
+          <p className="mt-2 text-2xl font-bold text-emerald-700 sm:text-3xl">{cert.course_title}</p>
+
+          <div className="mt-10 grid gap-6 text-sm sm:grid-cols-3">
+            <div>
+              <p className="text-stone-500">Tanggal lulus</p>
+              <p className="font-semibold text-ink">{formatDate(cert.issued_at)}</p>
+            </div>
+            <div>
+              <p className="text-stone-500">Pengajar</p>
+              <p className="font-semibold text-ink">{cert.teacher_name}</p>
+            </div>
+            <div>
+              <p className="text-stone-500">Kode verifikasi</p>
+              <p className="font-mono font-bold tracking-wider text-ink">{cert.certificate_code}</p>
+            </div>
           </div>
         </div>
       </div>

@@ -3,60 +3,63 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    @apply bg-stone-50 text-stone-800 leading-relaxed antialiased;
+    @apply bg-white text-stone-700 leading-relaxed antialiased;
   }
   h1, h2, h3 {
-    @apply font-extrabold text-stone-900 leading-tight;
+    @apply font-bold text-ink leading-tight;
   }
   :focus-visible {
-    outline: 3px solid #ea580c;
+    outline: 3px solid #d946c9;
     outline-offset: 2px;
   }
   ::selection {
-    background: #fed7aa;
+    background: #fbc6f6;
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
-    @apply btn bg-orange-600 text-white hover:bg-orange-700;
+    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700;
   }
   .btn-outline {
-    @apply btn border-2 border-orange-600 text-orange-700 hover:bg-orange-50;
+    @apply btn border border-brand-400 bg-white text-brand-700 hover:bg-brand-50;
   }
   .btn-green {
-    @apply btn bg-emerald-700 text-white hover:bg-emerald-800;
+    @apply btn bg-emerald-600 text-white shadow-sm hover:bg-emerald-700;
   }
   .btn-ghost {
-    @apply btn border-2 border-stone-200 bg-white text-stone-700 hover:bg-stone-100;
+    @apply btn border border-stone-300 bg-white text-stone-700 hover:bg-stone-100;
   }
   .btn-danger {
-    @apply btn border-2 border-red-300 bg-white text-red-700 hover:bg-red-50;
+    @apply btn border border-red-300 bg-white text-red-700 hover:bg-red-50;
   }
   .btn-sm {
     @apply px-3.5 py-1.5 text-xs;
   }
   .input {
-    @apply w-full rounded-2xl border-2 border-stone-200 bg-white px-4 py-2.5 text-stone-800 placeholder:text-stone-400 focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-100;
+    @apply w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100;
   }
   .label {
-    @apply mb-1 block text-sm font-bold text-stone-700;
+    @apply mb-1 block text-sm font-semibold text-stone-700;
   }
   .card {
-    @apply rounded-3xl border border-stone-200 bg-white shadow-sm;
+    @apply rounded-3xl border-2 border-brand-100 bg-white shadow-[0_10px_30px_-16px_rgba(168,60,190,0.35)];
   }
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold;
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
   }
   .badge-amber {
     @apply badge border border-amber-300 bg-amber-100 text-amber-800;
   }
   .badge-green {
-    @apply badge border border-emerald-300 bg-emerald-100 text-emerald-800;
+    @apply badge border border-emerald-300 bg-emerald-100 text-emerald-700;
   }
   .badge-stone {
     @apply badge border border-stone-200 bg-stone-100 text-stone-700;
@@ -70,12 +73,34 @@
   .page {
     @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6;
   }
+  /* Gradien khas BELLAJAR: pink → lavender → biru langit */
+  .hero-gradient {
+    background: linear-gradient(180deg, #f6a6ef 0%, #c5b4f2 52%, #6ecbff 100%);
+  }
+  .soft-gradient {
+    background: linear-gradient(180deg, #fde1fb 0%, #ede4fb 55%, #d6f0ff 100%);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.twinkle {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .twinkle { animation: none; opacity: 0.8; }
 }
 
 @media print {
   @page {
     size: A4 landscape;
     margin: 10mm;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   body {
     background: #fff !important;

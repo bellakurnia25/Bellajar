@@ -122,14 +122,14 @@ export default async function CoursePage({ params, searchParams }) {
 
   return (
     <div className="page space-y-6">
-      <div>
-        <Link href="/courses" className="text-sm font-bold text-orange-700 hover:underline">← Semua kursus</Link>
-        <h1 className="mt-1 text-2xl sm:text-3xl">{course.title}</h1>
-        <p className="text-sm text-stone-600">Pengajar: {course.teacher_name}</p>
+      <div className="hero-gradient rounded-3xl p-6 sm:p-8">
+        <Link href="/courses" className="text-sm font-semibold text-white hover:underline" style={{ textShadow: '0 1px 8px rgba(120,40,160,.4)' }}>← Semua kursus</Link>
+        <h1 className="mt-1 text-2xl text-white sm:text-3xl" style={{ textShadow: '0 2px 12px rgba(120,40,160,.4)' }}>{course.title}</h1>
+        <p className="text-sm font-medium text-white" style={{ textShadow: '0 1px 8px rgba(120,40,160,.4)' }}>Pengajar: {course.teacher_name}</p>
       </div>
 
       {certificate && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-emerald-300 bg-emerald-100 px-5 py-4 text-emerald-800">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-emerald-300 bg-emerald-100 px-5 py-4 text-emerald-700">
           <p className="font-bold">Hore! Kamu sudah menyelesaikan semua bab. Sertifikatmu siap.</p>
           <Link href={`/certificate/${certificate.certificate_code}`} className="btn-green">Lihat Sertifikat</Link>
         </div>
@@ -160,16 +160,16 @@ export default async function CoursePage({ params, searchParams }) {
                       aria-current={isActive ? 'step' : undefined}
                       className={`flex items-center gap-3 rounded-2xl border-2 px-3 py-2.5 text-sm font-semibold ${
                         isActive
-                          ? 'border-orange-600 bg-orange-50 text-orange-800'
+                          ? 'border-brand-600 bg-brand-50 text-brand-800'
                           : 'border-transparent hover:bg-stone-100'
                       }`}
                     >
                       <span
                         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                           done
-                            ? 'bg-emerald-700 text-white'
+                            ? 'bg-emerald-600 text-white'
                             : isActive
-                            ? 'bg-orange-600 text-white'
+                            ? 'bg-brand-600 text-white'
                             : 'bg-stone-200 text-stone-600'
                         }`}
                       >
@@ -191,7 +191,7 @@ export default async function CoursePage({ params, searchParams }) {
           ) : (
             <>
               <article className="card p-6 sm:p-8">
-                <p className="text-sm font-bold text-orange-700">Bab {activeIndex + 1} dari {contents.length}</p>
+                <p className="text-sm font-bold text-brand-700">Bab {activeIndex + 1} dari {contents.length}</p>
                 <h2 className="mt-1 text-2xl sm:text-3xl">{active.title}</h2>
                 <div className="mt-5 whitespace-pre-line text-lg leading-relaxed text-stone-800">{active.body}</div>
 
@@ -218,7 +218,7 @@ export default async function CoursePage({ params, searchParams }) {
                   <ul className="mb-6 space-y-4">
                     {discussions.map((d) => (
                       <li key={d.id} className="flex gap-3">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-700">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 font-bold text-brand-700">
                           {d.username.charAt(0).toUpperCase()}
                         </span>
                         <div className="flex-1 rounded-2xl bg-stone-50 px-4 py-3">

@@ -22,7 +22,7 @@ export default async function ManageContentsPage({ params }) {
   return (
     <div className="page space-y-6">
       <div>
-        <Link href="/manage/courses" className="text-sm font-bold text-orange-700 hover:underline">← Kembali ke daftar kursus</Link>
+        <Link href="/manage/courses" className="text-sm font-bold text-brand-700 hover:underline">← Kembali ke daftar kursus</Link>
         <h1 className="mt-1 text-3xl">Materi: {course.title}</h1>
         <p className="text-stone-600">Atur urutan bab dengan kolom “Urutan”. Bab ditampilkan dari angka terkecil.</p>
       </div>

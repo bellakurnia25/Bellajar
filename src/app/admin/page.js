@@ -38,16 +38,16 @@ export default async function AdminPage() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {stats.map(([label, value]) => (
           <div key={label} className="card p-5">
-            <p className="text-3xl font-black text-orange-600">{value}</p>
+            <p className="text-3xl font-black text-brand-600">{value}</p>
             <p className="text-sm text-stone-600">{label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Link href="/admin/users" className="card p-6 hover:border-orange-300"><h2 className="text-lg">Manajemen Pengguna</h2><p className="text-sm text-stone-600">Edit, hapus, dan setujui Teacher.</p></Link>
-        <Link href="/admin/categories" className="card p-6 hover:border-orange-300"><h2 className="text-lg">Manajemen Kategori</h2><p className="text-sm text-stone-600">Tambah, ubah, dan hapus kategori.</p></Link>
-        <Link href="/manage/courses" className="card p-6 hover:border-orange-300"><h2 className="text-lg">Manajemen Kursus</h2><p className="text-sm text-stone-600">Kelola semua kursus dan materinya.</p></Link>
+        <Link href="/admin/users" className="card p-6 hover:border-brand-300"><h2 className="text-lg">Manajemen Pengguna</h2><p className="text-sm text-stone-600">Edit, hapus, dan setujui Teacher.</p></Link>
+        <Link href="/admin/categories" className="card p-6 hover:border-brand-300"><h2 className="text-lg">Manajemen Kategori</h2><p className="text-sm text-stone-600">Tambah, ubah, dan hapus kategori.</p></Link>
+        <Link href="/manage/courses" className="card p-6 hover:border-brand-300"><h2 className="text-lg">Manajemen Kursus</h2><p className="text-sm text-stone-600">Kelola semua kursus dan materinya.</p></Link>
       </div>
     </div>
   );

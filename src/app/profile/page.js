@@ -48,7 +48,7 @@ export default async function ProfilePage() {
   return (
     <div className="page space-y-8">
       {justApproved && (
-        <div className="rounded-3xl border border-emerald-300 bg-emerald-100 px-6 py-5 text-emerald-800">
+        <div className="rounded-3xl border border-emerald-300 bg-emerald-100 px-6 py-5 text-emerald-700">
           <p className="text-xl font-extrabold">Welcome Teacher!</p>
           <p>Akunmu sudah disetujui Admin. Sekarang kamu bisa membuat dan mengelola kursus sendiri.</p>
           <Link href="/manage/courses" className="btn-green mt-3">Buat Kursus Pertamamu</Link>
@@ -57,7 +57,7 @@ export default async function ProfilePage() {
 
       <section className="card flex flex-wrap items-center justify-between gap-4 p-6">
         <div className="flex items-center gap-4">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-2xl font-black text-orange-700">
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-100 text-2xl font-black text-brand-700">
             {user.username.charAt(0).toUpperCase()}
           </span>
           <div>
@@ -87,7 +87,7 @@ export default async function ProfilePage() {
         <h2 className="mb-4 text-2xl">Kursus yang Kuikuti</h2>
         {enrolled.length === 0 ? (
           <div className="card p-8 text-center text-stone-600">
-            Belum ada kursus yang diikuti. <Link href="/courses" className="font-bold text-orange-700 hover:underline">Pilih kursus pertamamu</Link>.
+            Belum ada kursus yang diikuti. <Link href="/courses" className="font-bold text-brand-700 hover:underline">Pilih kursus pertamamu</Link>.
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
@@ -114,7 +114,7 @@ export default async function ProfilePage() {
           <h2 className="mb-4 text-2xl">Monitoring Siswa</h2>
           {teacherCourses.length === 0 ? (
             <div className="card p-8 text-center text-stone-600">
-              Kamu belum punya kursus. <Link href="/manage/courses" className="font-bold text-orange-700 hover:underline">Buat kursus</Link> untuk mulai mengajar.
+              Kamu belum punya kursus. <Link href="/manage/courses" className="font-bold text-brand-700 hover:underline">Buat kursus</Link> untuk mulai mengajar.
             </div>
           ) : (
             <div className="space-y-5">

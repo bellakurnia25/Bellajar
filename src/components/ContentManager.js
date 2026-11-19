@@ -89,7 +89,7 @@ export default function ContentManager({ courseId, contents }) {
           {contents.map((c) => (
             <li key={c.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-700">{c.order_index}</span>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 font-bold text-brand-700">{c.order_index}</span>
                 <div className="min-w-0">
                   <p className="font-bold">{c.title}</p>
                   <p className="truncate text-sm text-stone-500">{c.body}</p>
