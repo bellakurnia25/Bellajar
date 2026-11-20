@@ -27,7 +27,7 @@ export default async function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 shadow-[0_1px_0_rgba(217,70,201,0.15)] backdrop-blur print:hidden">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/" aria-label="BELLAJAR – Beranda" className="shrink-0">
           <Logo />
         </Link>
@@ -74,7 +74,7 @@ export default async function Navbar() {
 
       {staff.length > 0 && (
         <div className="hidden border-t border-brand-100 bg-brand-50 md:block">
-          <nav aria-label="Menu pengelola" className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2 sm:px-6">
+          <nav aria-label="Menu pengelola" className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 sm:px-6">
             <span className="mr-1 text-xs font-semibold text-brand-800">Pengelola:</span>
             {staff.map((l) => (
               <NavLink key={l.href} href={l.href} size="sm">{l.label}</NavLink>

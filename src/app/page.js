@@ -40,36 +40,64 @@ export default async function HomePage({ searchParams }) {
     searching ? getCourses({ userId, search: q, categoryId }) : Promise.resolve([]),
   ]);
 
-  const shadow = { textShadow: '0 2px 14px rgba(120, 40, 160, 0.35)' };
+  // HAPUS kode `const shadow = ...` yang lama, GANTI dengan ini:
+    const shadow3dTitle = {
+      fontFamily: "'Nunito', sans-serif", 
+      textShadow: `
+        0 1px 0 #7b2cbf,
+        0 2px 0 #5a189a,
+        0 3px 0 #3c096c,
+        0 6px 12px rgba(35, 10, 65, 0.45)
+      `,
+    };
+
+    const shadow3dSubtitle = {
+      textShadow: '0 2px 6px rgba(45, 15, 85, 0.75)',
+    };
   const why = WHY.map((w) => ({ ...w, image: findWhyImage(w.file) }));
 
   return (
     <>
-      {/* Hero */}
+
+    {/* Hero */}
       <section className="hero-gradient relative overflow-hidden">
         <span aria-hidden="true" className="twinkle absolute left-[46%] top-[14%] text-2xl text-white">✦</span>
         <span aria-hidden="true" className="twinkle absolute left-[8%] top-[62%] text-lg text-white" style={{ animationDelay: '1s' }}>✦</span>
         <span aria-hidden="true" className="twinkle absolute right-[10%] top-[10%] text-xl text-yellow-200" style={{ animationDelay: '2s' }}>✦</span>
 
-        <div className="mx-auto grid max-w-6xl items-end gap-2 px-4 sm:px-5 lg:grid-cols-[1.15fr_1fr]">
-          <div className="pb-8 pt-12 sm:pt-16 lg:pb-16">
-            <h1 className="max-w-lg text-4xl font-bold leading-[1.2] text-white sm:text-5xl sm:leading-[1.2]" style={shadow}>              Belajar jadi petualangan, satu bab setiap hari.
+        <div className="mx-auto grid max-w-7xl items-end gap-2 px-4 sm:px-5 lg:grid-cols-[1.15fr_1fr]">
+          <div className="relative z-10 pb-8 pt-12 sm:pt-16 lg:pb-16">
+            {/* Lebar disamakan ke max-w-2xl agar sejajar dengan card pencarian */}
+            <h1 
+              className="max-w-2xl text-4xl font-extrabold leading-[1.2] text-white sm:text-5xl sm:leading-[1.2]" 
+              style={shadow3dTitle}
+            >             
+              Belajar Jadi Petualangan, Satu Bab Setiap Hari.
             </h1>
-            <p className="mt-2 max-w-md text-base font-medium text-white" style={shadow}>
-              Kursus daring untuk anak usia 7–12 tahun. Materi singkat, progres tersimpan, dan sertifikat
+
+            {/* Lebar disamakan ke max-w-2xl agar sejajar dengan card pencarian */}
+            <p 
+              className="mt-2 max-w-2xl text-base font-medium text-white" 
+              style={shadow3dSubtitle}
+            >
+              Kursus daring untuk anak usia 5-11 tahun. Materi singkat, progres tersimpan, dan sertifikat
               otomatis saat semua bab selesai.
             </p>
-            <div className="mt-6 max-w-xl rounded-2xl bg-white p-3 shadow-lg">
+
+            {/* Card pencarian */}
+            <div className="mt-6 w-full max-w-2xl rounded-2xl bg-white p-3 shadow-lg">
               <SearchForm action="/" categories={categories} q={q} category={categoryId || ''} />
             </div>
           </div>
-          <div className="self-end pb-0">
+
+          {/* Ditambahkan origin-bottom agar kaki gambar tidak terpotong saat di-scale */}
+          <div className="w-full self-end pb-0 origin-bottom lg:translate-x-8 lg:scale-110">
             <HeroKids />
           </div>
         </div>
       </section>
 
-      <div className="page space-y-14">
+      <div className="page space-y-14 page !max-w-7xl">
         {/* Kategori */}
         {categories.length > 0 && (
           <section aria-labelledby="kategori">

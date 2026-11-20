@@ -25,26 +25,55 @@ export default async function CertificatePage({ params }) {
 
   return (
     <div className="page">
+      {/* Navigasi & Tombol Cetak (Otomatis hilang saat di-print) */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <Link href="/profile" className="text-sm font-semibold text-brand-700 hover:underline">← Kembali ke profil</Link>
+        <Link href="/profile" className="text-sm font-semibold text-brand-700 hover:underline">
+          ← Kembali ke profil
+        </Link>
         <PrintButton />
       </div>
 
-      <div className="hero-gradient mx-auto max-w-4xl rounded-3xl p-3 print:max-w-none print:rounded-none">
-        <div className="relative overflow-hidden rounded-2xl bg-white p-8 text-center sm:p-14">
-          <span aria-hidden="true" className="absolute left-6 top-6 text-3xl text-brand-300">✦</span>
-          <span aria-hidden="true" className="absolute right-8 top-10 text-2xl text-sky-300">✦</span>
-          <span aria-hidden="true" className="absolute bottom-8 left-10 text-2xl text-amber-300">✦</span>
-          <span aria-hidden="true" className="absolute bottom-6 right-6 text-3xl text-emerald-300">✦</span>
+      {/* Kanvas Sertifikat Rasio 16:9 sesuai template gambar */}
+      <div className="relative mx-auto aspect-video w-full max-w-5xl overflow-hidden rounded-3xl shadow-2xl print:max-w-none print:rounded-none print:shadow-none">
+        
+        {/* 1. Background Template Gambar Anda */}
+        <img
+          src="/images/certificate-bg.png"
+          alt="Bingkai Sertifikat BELLAJAR"
+          className="h-full w-full object-cover"
+        />
 
-          <div className="flex justify-center"><Logo size="lg" /></div>
-          <h1 className="mt-6 text-4xl sm:text-5xl">Sertifikat Kelulusan</h1>
-          <p className="mt-6 text-stone-600">Diberikan dengan bangga kepada</p>
-          <p className="mt-3 border-b-4 border-brand-300 pb-3 text-4xl font-bold text-brand-700 sm:text-5xl">{cert.student_name}</p>
-          <p className="mt-6 text-stone-600">yang telah menyelesaikan seluruh materi kursus</p>
-          <p className="mt-2 text-2xl font-bold text-emerald-700 sm:text-3xl">{cert.course_title}</p>
+        {/* 2. Isi Teks Dinamis di Atas Gambar */}
+        <div className="absolute inset-0 flex flex-col items-center justify-between px-14 py-8 text-center sm:px-24 sm:py-12">
+          
+          {/* Bagian Atas: Logo & Judul */}
+          <div className="flex flex-col items-center">
+            <Logo size="lg" />
+            <h1 className="mt-2 text-2xl font-extrabold tracking-wide text-[#3C096C] sm:mt-3 sm:text-4xl">
+              Sertifikat Kelulusan
+            </h1>
+            <p className="mt-1 text-xs font-medium text-stone-600 sm:text-sm">
+              Diberikan dengan bangga kepada
+            </p>
+          </div>
 
-          <div className="mt-10 grid gap-6 text-sm sm:grid-cols-3">
+          {/* Bagian Tengah: Nama Anak & Judul Kursus */}
+          <div className="my-auto flex w-full max-w-2xl flex-col items-center">
+            <p className="border-b-4 border-dashed border-[#FACC15] px-6 pb-2 text-2xl font-extrabold text-[#A828B5] sm:text-5xl">
+              {cert.student_name}
+            </p>
+
+            <p className="mt-3 text-xs font-medium text-stone-600 sm:mt-4 sm:text-base">
+              yang telah menyelesaikan seluruh materi kursus
+            </p>
+
+            <p className="mt-1.5 rounded-full bg-[#FAF5FF] px-5 py-1 text-base font-bold text-[#3C096C] ring-2 ring-[#E935C1]/30 sm:text-2xl">
+              {cert.course_title}
+            </p>
+          </div>
+
+          {/* Bagian Bawah: Tanggal, Pengajar & Kode Verifikasi (Digeser agak ke kiri agar tidak menabrak stiker medali kanan bawah) */}
+          <div className="grid w-full max-w-2xl grid-cols-3 gap-4 pb-1 pr-10 text-xs sm:pb-2 sm:pr-20 sm:text-sm">
             <div>
               <p className="text-stone-500">Tanggal lulus</p>
               <p className="font-semibold text-ink">{formatDate(cert.issued_at)}</p>
@@ -58,6 +87,7 @@ export default async function CertificatePage({ params }) {
               <p className="font-mono font-bold tracking-wider text-ink">{cert.certificate_code}</p>
             </div>
           </div>
+
         </div>
       </div>
     </div>

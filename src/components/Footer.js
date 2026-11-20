@@ -5,10 +5,10 @@ export default function Footer() {
   return (
     <footer className="mt-16 bg-white print:hidden">
       <div className="hero-gradient h-2" />
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto]">
         <div>
           <Logo />
-          <p className="mt-2 max-w-xl text-sm text-stone-600">Kursus daring yang ramah untuk anak usia 7–12 tahun.</p>
+          <p className="mt-2 max-w-xl text-sm text-stone-600">Kursus daring yang ramah untuk anak usia 5-11 tahun.</p>
           <p className="mt-4 max-w-xl rounded-2xl border border-amber-300 bg-amber-100 px-4 py-3 text-sm text-amber-800">
             <strong>Untuk Ayah &amp; Bunda:</strong> mohon dampingi si kecil saat belajar dan gunakan email orang
             tua saat mendaftar, agar progres dan sertifikatnya tersimpan dengan aman.

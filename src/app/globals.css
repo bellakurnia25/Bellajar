@@ -71,11 +71,11 @@
     @apply rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700;
   }
   .page {
-    @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6;
+    @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6;
   }
   /* Gradien khas BELLAJAR: pink → lavender → biru langit */
   .hero-gradient {
-    background: linear-gradient(180deg, #f6a6ef 0%, #c5b4f2 52%, #6ecbff 100%);
+    background: linear-gradient(180deg, #fc3fe9 0%, #63c5fd 100%);
   }
   .soft-gradient {
     background: linear-gradient(180deg, #fde1fb 0%, #ede4fb 55%, #d6f0ff 100%);
@@ -104,5 +104,16 @@
   }
   body {
     background: #fff !important;
+  }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
