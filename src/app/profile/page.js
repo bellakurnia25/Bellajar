@@ -4,6 +4,7 @@ import { query } from '@/lib/db';
 import { getCourses } from '@/lib/queries';
 import { pct, formatDate } from '@/lib/utils';
 import ProgressBar from '@/components/ProgressBar';
+import EditProfileModal from '@/components/EditProfileModal';
 
 export const metadata = { title: 'Profil Saya – BELLAJAR' };
 
@@ -70,7 +71,8 @@ export default async function ProfilePage() {
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <EditProfileModal user={{ username: user.username, email: user.email }} />
           {canManageCourses(user) && <Link href="/manage/courses" className="btn-outline">Kelola Kursus</Link>}
           <Link href="/courses" className="btn-primary">Cari Kursus</Link>
         </div>
