@@ -21,9 +21,9 @@ export async function POST(req, { params }) {
   }
 
   const row = await queryOne(
-    `INSERT INTO contents (course_id, title, body, order_index)
-     VALUES ($1, $2, $3, $4) RETURNING id`,
-    [courseId, data.title, data.body, order]
+    `INSERT INTO contents (course_id, title, body, image_url, order_index)
+     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+    [courseId, data.title, data.body, data.image_url, order]
   );
   return ok({ id: row.id }, 201);
 }

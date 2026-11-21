@@ -7,6 +7,7 @@ export default function ContentManager({ courseId, contents }) {
   const router = useRouter();
   const nextOrder = contents.length ? Math.max(...contents.map((c) => c.order_index)) + 1 : 1;
   const [form, setForm] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -14,19 +15,50 @@ export default function ContentManager({ courseId, contents }) {
 
   const openNew = () => {
     setError('');
-    setForm({ id: null, title: '', body: '', order_index: String(nextOrder) });
+    setForm({ id: null, title: '', body: '', image_url: '', order_index: String(nextOrder) });
   };
   const openEdit = (c) => {
     setError('');
-    setForm({ id: c.id, title: c.title, body: c.body, order_index: String(c.order_index) });
+    setForm({
+      id: c.id,
+      title: c.title,
+      body: c.body,
+      image_url: c.image_url || '',
+      order_index: String(c.order_index),
+    });
   };
+
+  async function handleImageUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('folder', 'materials');
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal mengunggah gambar materi.');
+      setForm((prev) => ({ ...prev, image_url: data.url }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function save(e) {
     e.preventDefault();
     setBusy(true);
     setError('');
     try {
-      const payload = { title: form.title, body: form.body, order_index: form.order_index };
+      const payload = {
+        title: form.title,
+        body: form.body,
+        image_url: form.image_url || null,
+        order_index: form.order_index,
+      };
       if (form.id) await api(`/api/contents/${form.id}`, 'PUT', payload);
       else await api(`/api/courses/${courseId}/contents`, 'POST', payload);
       setForm(null);
@@ -71,12 +103,59 @@ export default function ContentManager({ courseId, contents }) {
               <input id="ct-order" type="number" min={1} required className="input" value={form.order_index} onChange={set('order_index')} />
             </div>
           </div>
+
+          {/* Poin 15: Space untuk menginput atau mengganti gambar materi */}
+          <div className="rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50/40 p-4">
+            <label className="label" htmlFor="ct-image">Gambar Ilustrasi Materi (opsional)</label>
+            <p className="mb-2 text-xs text-stone-600">
+              Tambahkan gambar agar materi lebih menarik dan mudah dipahami anak-anak.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <label className="btn-outline btn-sm cursor-pointer">
+                {uploading ? 'Mengunggah gambar...' : form.image_url ? 'Ganti Gambar Materi' : 'Unggah Gambar Materi'}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={handleImageUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+              <input
+                id="ct-image"
+                type="text"
+                className="input flex-1"
+                value={form.image_url}
+                onChange={set('image_url')}
+                placeholder="Atau tempel tautan gambar (https://...)"
+              />
+              {form.image_url && (
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, image_url: '' })}
+                  className="btn-danger btn-sm"
+                >
+                  Hapus Gambar
+                </button>
+              )}
+            </div>
+            {form.image_url && (
+              <div className="mt-3">
+                <img
+                  src={form.image_url}
+                  alt="Pratinjau gambar materi"
+                  className="max-h-48 rounded-2xl border border-brand-200 object-contain bg-white p-2 shadow-sm"
+                />
+              </div>
+            )}
+          </div>
+
           <div>
             <label className="label" htmlFor="ct-body">Isi materi</label>
             <textarea id="ct-body" required rows={10} className="input" value={form.body} onChange={set('body')} placeholder="Tulis materi dengan bahasa yang sederhana dan ramah anak. Baris baru akan tampil apa adanya." />
           </div>
           <div className="flex gap-2">
-            <button type="submit" disabled={busy} className="btn-primary">{busy ? 'Menyimpan…' : 'Simpan bab'}</button>
+            <button type="submit" disabled={busy || uploading} className="btn-primary">{busy ? 'Menyimpan...' : 'Simpan bab'}</button>
             <button type="button" onClick={() => setForm(null)} className="btn-ghost">Batal</button>
           </div>
         </form>
@@ -90,6 +169,9 @@ export default function ContentManager({ courseId, contents }) {
             <li key={c.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
               <div className="flex min-w-0 flex-1 items-center gap-3">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 font-bold text-brand-700">{c.order_index}</span>
+                {c.image_url && (
+                  <img src={c.image_url} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover border border-brand-100" />
+                )}
                 <div className="min-w-0">
                   <p className="font-bold">{c.title}</p>
                   <p className="truncate text-sm text-stone-500">{c.body}</p>

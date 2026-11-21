@@ -21,12 +21,26 @@ export async function POST(_req, { params }) {
   if (accessStatus(course) !== 'open') return fail('Masa akses kursus ini sedang tidak aktif.');
 
   const enrollment = await queryOne(
-    'SELECT id FROM enrollments WHERE user_id = $1 AND course_id = $2',
+    'SELECT id, completed_content_ids FROM enrollments WHERE user_id = $1 AND course_id = $2',
     [user.id, content.course_id]
   );
-  if (!enrollment) return fail('Ikuti kursus ini dulu ya.', 403);
+  if (!enrollment) return fail('Ikuti kursus ini terlebih dahulu.', 403);
 
-  // Tambahkan content_id ke array hanya jika belum ada.
+  // Periksa urutan bab agar tidak ada bab sebelumnya yang dilangkahi (poin 9)
+  const orderedContents = await query(
+    'SELECT id FROM contents WHERE course_id = $1 ORDER BY order_index ASC, id ASC',
+    [content.course_id]
+  );
+  const currentIndex = orderedContents.findIndex((c) => c.id === contentId);
+  const completedSet = new Set(enrollment.completed_content_ids || []);
+  const hasUnfinishedPrev = orderedContents
+    .slice(0, currentIndex)
+    .some((prev) => !completedSet.has(prev.id));
+
+  if (hasUnfinishedPrev) {
+    return fail('Tidak dapat menyelesaikan bab ini jika bab sebelumnya belum diselesaikan.', 400);
+  }
+
   await query(
     `UPDATE enrollments
      SET completed_content_ids = array_append(completed_content_ids, $1::int)

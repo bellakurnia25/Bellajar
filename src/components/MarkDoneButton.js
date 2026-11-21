@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/client-api';
 
-export default function MarkDoneButton({ contentId, done }) {
+export default function MarkDoneButton({ contentId, done, locked = false }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,6 +13,10 @@ export default function MarkDoneButton({ contentId, done }) {
   }
 
   async function mark() {
+    if (locked) {
+      setError('Tidak dapat menyelesaikan bab ini jika bab sebelumnya belum diselesaikan.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -27,10 +31,19 @@ export default function MarkDoneButton({ contentId, done }) {
 
   return (
     <div>
-      <button onClick={mark} disabled={loading} className="btn-green">
-        {loading ? 'Menyimpan…' : 'Mark as Done'}
+      <button
+        type="button"
+        onClick={mark}
+        disabled={loading}
+        className={locked ? 'btn-ghost border-amber-300 text-amber-800' : 'btn-green'}
+      >
+        {loading ? 'Menyimpan...' : locked ? '🔒 Selesaikan Bab Sebelumnya Dulu' : 'Tandai Bab Selesai'}
       </button>
-      {error && <p className="mt-2 text-xs font-semibold text-red-700">{error}</p>}
+      {error && (
+        <p className="mt-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

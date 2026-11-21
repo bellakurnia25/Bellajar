@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, canEnrollCourses } from '@/lib/auth';
 import { queryOne, query } from '@/lib/db';
 import { getCourses, getContents } from '@/lib/queries';
 import { toId } from '@/lib/http';
@@ -21,16 +21,19 @@ export default async function CoursePage({ params, searchParams }) {
 
   const contents = await getContents(courseId);
   const isStaff = !!user && (user.role === 'admin' || course.teacher_id === user.id);
-  const enrollment = user
-    ? await queryOne(
-        'SELECT id, completed_content_ids FROM enrollments WHERE user_id = $1 AND course_id = $2',
-        [user.id, courseId]
-      )
-    : null;
+  const allowedToEnroll = canEnrollCourses(user);
+
+  const enrollment =
+    user && allowedToEnroll
+      ? await queryOne(
+          'SELECT id, completed_content_ids FROM enrollments WHERE user_id = $1 AND course_id = $2',
+          [user.id, courseId]
+        )
+      : null;
   const status = accessStatus(course);
   const canRead = isStaff || (enrollment && status === 'open');
 
-  /* ---------- Tampilan pratinjau (belum terdaftar / akses tidak aktif) ---------- */
+  /* ---------- Tampilan pratinjau ---------- */
   if (!canRead) {
     return (
       <div className="page grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -61,7 +64,11 @@ export default async function CoursePage({ params, searchParams }) {
         </div>
 
         <aside className="card h-fit space-y-4 p-6">
-          {enrollment && status !== 'open' ? (
+          {!allowedToEnroll ? (
+            <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800">
+              Akun <strong>Pengajar</strong>, <strong>Calon Pengajar</strong>, dan <strong>Admin</strong> tidak dapat mendaftar sebagai peserta kursus.
+            </div>
+          ) : enrollment && status !== 'open' ? (
             <div className="rounded-2xl border border-amber-300 bg-amber-100 p-4 text-sm text-amber-800">
               {status === 'upcoming'
                 ? `Kursus ini baru dibuka pada ${formatDate(course.start_date)}.`
@@ -79,14 +86,17 @@ export default async function CoursePage({ params, searchParams }) {
                 : 'Masa akses kursus ini sudah berakhir.'}
             </div>
           )}
-        <a
-          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(course.teacher_email)}&su=${encodeURIComponent('Pertanyaan tentang kursus: ' + course.title)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-outline w-full"
-        >
-          Hubungi Teacher
-        </a>
+
+          {allowedToEnroll && (
+            <a
+              href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(course.teacher_email)}&su=${encodeURIComponent('Pertanyaan tentang kursus: ' + course.title)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline w-full"
+            >
+              Hubungi Pengajar
+            </a>
+          )}
         </aside>
       </div>
     );
@@ -106,6 +116,12 @@ export default async function CoursePage({ params, searchParams }) {
   const activeIndex = active ? contents.findIndex((c) => c.id === active.id) : -1;
   const nextContent = activeIndex >= 0 ? contents[activeIndex + 1] : null;
 
+  // Poin 9: Cek apakah ada bab sebelum bab aktif yang belum diselesaikan
+  const isLocked =
+    !!enrollment &&
+    activeIndex > 0 &&
+    contents.slice(0, activeIndex).some((prev) => !completed.has(prev.id));
+
   const certificate =
     enrollment && percent === 100
       ? await queryOne('SELECT certificate_code FROM certificates WHERE user_id = $1 AND course_id = $2', [user.id, courseId])
@@ -122,14 +138,16 @@ export default async function CoursePage({ params, searchParams }) {
 
   return (
     <div className="page space-y-6">
-      <div className="hero-gradient rounded-3xl p-6 sm:p-8">
-        <Link href="/courses" className="text-sm font-semibold text-white hover:underline" style={{ textShadow: '0 1px 8px rgba(120,40,160,.4)' }}>← Semua kursus</Link>
-        <h1 className="mt-1 text-2xl text-white sm:text-3xl" style={{ textShadow: '0 2px 12px rgba(120,40,160,.4)' }}>{course.title}</h1>
-        <p className="text-sm font-medium text-white" style={{ textShadow: '0 1px 8px rgba(120,40,160,.4)' }}>Pengajar: {course.teacher_name}</p>
+      <div className="hero-gradient rounded-3xl p-6 sm:p-8 shadow-lg">
+        <Link href={isStaff ? '/manage/courses' : '/courses'} className="text-sm font-semibold text-white hover:underline">
+          ← {isStaff ? 'Kembali ke kelola kursus' : 'Semua kursus'}
+        </Link>
+        <h1 className="mt-1 text-2xl text-white sm:text-3xl">{course.title}</h1>
+        <p className="text-sm font-medium text-white/95">Pengajar: {course.teacher_name}</p>
       </div>
 
       {certificate && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-emerald-300 bg-emerald-100 px-5 py-4 text-emerald-700">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-emerald-300 bg-emerald-100 px-5 py-4 text-emerald-700 shadow-sm">
           <p className="font-bold">Hore! Kamu sudah menyelesaikan semua bab. Sertifikatmu siap.</p>
           <Link href={`/certificate/${certificate.certificate_code}`} className="btn-green">Lihat Sertifikat</Link>
         </div>
@@ -153,6 +171,9 @@ export default async function CoursePage({ params, searchParams }) {
               {contents.map((c, i) => {
                 const done = completed.has(c.id);
                 const isActive = active?.id === c.id;
+                const stepLocked =
+                  !!enrollment && i > 0 && contents.slice(0, i).some((prev) => !completed.has(prev.id));
+
                 return (
                   <li key={c.id}>
                     <Link
@@ -173,7 +194,7 @@ export default async function CoursePage({ params, searchParams }) {
                             : 'bg-stone-200 text-stone-600'
                         }`}
                       >
-                        {done ? '✓' : i + 1}
+                        {done ? '✓' : stepLocked ? '🔒' : i + 1}
                       </span>
                       <span className="flex-1">{c.title}</span>
                     </Link>
@@ -193,10 +214,31 @@ export default async function CoursePage({ params, searchParams }) {
               <article className="card p-6 sm:p-8">
                 <p className="text-sm font-bold text-brand-700">Bab {activeIndex + 1} dari {contents.length}</p>
                 <h2 className="mt-1 text-2xl sm:text-3xl">{active.title}</h2>
+
+                {/* Poin 9: Peringatan jika membuka bab lanjutan sebelum bab sebelumnya selesai */}
+                {isLocked && (
+                  <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+                    ⚠️ Tidak dapat menyelesaikan bab ini jika bab sebelumnya belum diselesaikan. Selesaikan bab secara berurutan mulai dari bab pertama.
+                  </div>
+                )}
+
+                {/* Poin 15: Tampilkan gambar materi jika tersedia */}
+                {active.image_url && (
+                  <div className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-brand-50/30 p-3">
+                    <img
+                      src={active.image_url}
+                      alt={active.title}
+                      className="mx-auto max-h-80 w-auto rounded-xl object-contain"
+                    />
+                  </div>
+                )}
+
                 <div className="mt-5 whitespace-pre-line text-lg leading-relaxed text-stone-800">{active.body}</div>
 
                 <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-stone-100 pt-6">
-                  {enrollment && <MarkDoneButton contentId={active.id} done={completed.has(active.id)} />}
+                  {enrollment && (
+                    <MarkDoneButton contentId={active.id} done={completed.has(active.id)} locked={isLocked} />
+                  )}
                   {nextContent ? (
                     <Link href={`/courses/${course.id}?c=${nextContent.id}`} className="btn-primary">Lanjutkan</Link>
                   ) : certificate ? (

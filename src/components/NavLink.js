@@ -4,7 +4,10 @@ import { usePathname } from 'next/navigation';
 
 export default function NavLink({ href, children, size = 'md' }) {
   const pathname = usePathname();
-  const active = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+  const active =
+    href === '/' || href === '/admin'
+      ? pathname === href
+      : pathname === href || pathname.startsWith(href + '/');
   const sizeClass = size === 'sm' ? 'px-3 py-1 text-xs' : 'px-4 py-1.5 text-sm';
   const tone = active
     ? 'border-brand-600 bg-brand-600 text-white'

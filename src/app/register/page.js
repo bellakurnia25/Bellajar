@@ -19,14 +19,14 @@ export default async function RegisterPage({ searchParams }) {
 
   return (
     <div className="soft-gradient px-4 py-10">
-      <div className="mx-auto w-full max-w-md">
+      <div className="mx-auto w-full max-w-lg">
         <div className="card p-8">
           <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
-          <h1 className="text-center text-2xl">Buat akun BELLAJAR</h1>
+          <h1 className="text-center text-2xl">Buat Akun BELLAJAR</h1>
 
           <div className="mt-5 flex gap-1 rounded-full border border-brand-200 bg-white p-1">
-            <Link href="/register?as=student" className={tab(as === 'student')}>Register as Student</Link>
-            <Link href="/register?as=teacher" className={tab(as === 'teacher')}>Register as Teacher</Link>
+            <Link href="/register?as=student" className={tab(as === 'student')}>Daftar sebagai Siswa</Link>
+            <Link href="/register?as=teacher" className={tab(as === 'teacher')}>Daftar sebagai Pengajar</Link>
           </div>
 
           {as === 'student' ? (
@@ -36,8 +36,7 @@ export default async function RegisterPage({ searchParams }) {
             </div>
           ) : (
             <div className="my-6 rounded-2xl border border-amber-300 bg-amber-100 px-4 py-3 text-sm text-amber-800">
-              Pendaftaran Teacher perlu disetujui Admin. Selama menunggu, kamu tetap bisa mengikuti kursus
-              sebagai Student.
+              <strong>Pendaftaran Calon Pengajar:</strong> Lengkapi biodata, CV, portofolio, dan bidang keahlian yang dilamar. Selama menunggu persetujuan Admin, akun berstatus sebagai <strong>Calon Pengajar</strong>.
             </div>
           )}
 

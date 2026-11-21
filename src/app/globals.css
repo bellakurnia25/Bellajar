@@ -23,7 +23,7 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60;
   }
   .btn-primary {
     @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700;
@@ -46,11 +46,16 @@
   .input {
     @apply w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm text-stone-800 placeholder:text-stone-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100;
   }
+  /* Pengaturan tanggal dengan drop shadow yang jelas (Poin 14) */
+  .input-date {
+    @apply input shadow-md shadow-brand-200/60 border-brand-200;
+  }
   .label {
     @apply mb-1 block text-sm font-semibold text-stone-700;
   }
+  /* Setiap card memiliki drop shadow yang jelas (Poin 3) */
   .card {
-    @apply rounded-3xl border-2 border-brand-100 bg-white shadow-[0_10px_30px_-16px_rgba(168,60,190,0.35)];
+    @apply rounded-3xl border-2 border-brand-100 bg-white shadow-[0_12px_28px_-10px_rgba(140,40,130,0.22)] transition-shadow hover:shadow-[0_16px_34px_-10px_rgba(140,40,130,0.32)];
   }
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
@@ -73,7 +78,7 @@
   .page {
     @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6;
   }
-  /* Gradien khas BELLAJAR: pink → lavender → biru langit */
+  /* Gradien khas BELLAJAR */
   .hero-gradient {
     background: linear-gradient(180deg, #fc3fe9 0%, #63c5fd 100%);
   }
@@ -104,16 +109,5 @@
   }
   body {
     background: #fff !important;
-  }
-}
-
-@media print {
-  @page {
-    size: landscape;
-    margin: 0;
-  }
-  body {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
   }
 }

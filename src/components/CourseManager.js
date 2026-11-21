@@ -8,7 +8,7 @@ const EMPTY = { id: null, title: '', description: '', category_id: '', start_dat
 
 export default function CourseManager({ courses, categories, teachers, isAdmin, currentUserId }) {
   const router = useRouter();
-  const [form, setForm] = useState(null); // null = form tertutup
+  const [form, setForm] = useState(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -102,23 +102,24 @@ export default function CourseManager({ courses, categories, teachers, isAdmin, 
               <div>
                 <label className="label" htmlFor="c-teacher">Pengajar</label>
                 <select id="c-teacher" className="input" value={form.teacher_id} onChange={set('teacher_id')}>
-                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.username} ({t.role})</option>)}
+                  {teachers.map((t) => <option key={t.id} value={t.id}>{t.username}</option>)}
                 </select>
               </div>
             )}
-            <div>
+            {/* Poin 14: Drop shadow pada pengaturan tanggal */}
+            <div className="rounded-2xl border border-brand-100 bg-brand-50/40 p-3.5 shadow-md shadow-brand-200/50">
               <label className="label" htmlFor="c-start">Tanggal mulai (opsional)</label>
-              <input id="c-start" type="date" className="input" value={form.start_date} onChange={set('start_date')} />
+              <input id="c-start" type="date" className="input-date" value={form.start_date} onChange={set('start_date')} />
             </div>
-            <div>
+            <div className="rounded-2xl border border-brand-100 bg-brand-50/40 p-3.5 shadow-md shadow-brand-200/50">
               <label className="label" htmlFor="c-end">Tanggal selesai (opsional)</label>
-              <input id="c-end" type="date" className="input" value={form.end_date} onChange={set('end_date')} />
+              <input id="c-end" type="date" className="input-date" value={form.end_date} onChange={set('end_date')} />
             </div>
           </div>
           <p className="text-sm text-stone-600">Kosongkan kedua tanggal agar kursus ini berakses Lifetime.</p>
 
           <div className="flex gap-2">
-            <button type="submit" disabled={busy} className="btn-primary">{busy ? 'Menyimpan…' : 'Simpan kursus'}</button>
+            <button type="submit" disabled={busy} className="btn-primary">{busy ? 'Menyimpan...' : 'Simpan kursus'}</button>
             <button type="button" onClick={() => setForm(null)} className="btn-ghost">Batal</button>
           </div>
         </form>

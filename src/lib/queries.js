@@ -18,10 +18,6 @@ LEFT JOIN categories cat ON cat.id = c.category_id
 LEFT JOIN (SELECT course_id, COUNT(*) AS cnt FROM enrollments GROUP BY course_id) pc ON pc.course_id = c.id
 LEFT JOIN enrollments e ON e.course_id = c.id AND e.user_id = $1`;
 
-/**
- * Daftar kursus + jumlah siswa (JOIN & COUNT) + progres milik userId (jika ada).
- * popular=true mengurutkan berdasarkan jumlah siswa terbanyak.
- */
 export async function getCourses({
   userId = null,
   search = '',
@@ -74,7 +70,7 @@ export function getCategories() {
 
 export function getContents(courseId) {
   return query(
-    `SELECT id, course_id, title, body, order_index
+    `SELECT id, course_id, title, body, image_url, order_index
      FROM contents WHERE course_id = $1 ORDER BY order_index ASC, id ASC`,
     [courseId]
   );

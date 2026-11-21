@@ -1,4 +1,5 @@
 import { queryOne } from '@/lib/db';
+import { canEnrollCourses } from '@/lib/auth';
 import { guard } from '@/lib/guard';
 import { ok, fail, toId } from '@/lib/http';
 import { accessStatus } from '@/lib/utils';
@@ -6,6 +7,11 @@ import { accessStatus } from '@/lib/utils';
 export async function POST(_req, { params }) {
   const { user, res } = await guard();
   if (res) return res;
+
+  if (!canEnrollCourses(user)) {
+    return fail('Akun Admin, Pengajar, atau Calon Pengajar tidak dapat mendaftar sebagai peserta kursus.', 403);
+  }
+
   const courseId = toId((await params).id);
   if (!courseId) return fail('ID kursus tidak valid.');
 

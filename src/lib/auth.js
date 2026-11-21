@@ -46,13 +46,15 @@ export const getCurrentUser = cache(async () => {
   const id = readToken(token);
   if (!id) return null;
   return queryOne(
-    `SELECT id, username, email, role, teacher_status, approved_at, created_at
+    `SELECT id, username, email, role, teacher_status, avatar,
+            teacher_bio, teacher_cv_url, teacher_portfolio_url,
+            teacher_specialty, teacher_review_note, approved_at, created_at
      FROM users WHERE id = $1`,
     [id]
   );
 });
 
-/** Admin, atau Teacher yang sudah di-approve, boleh mengelola kursus. */
+/** Admin, atau Teacher yang sudah disetujui, boleh mengelola kursus. */
 export function canManageCourses(user) {
   return (
     !!user &&
@@ -60,12 +62,29 @@ export function canManageCourses(user) {
   );
 }
 
+/** Hanya Siswa murni (bukan Admin, bukan Teacher, bukan Calon Pengajar) yang boleh mengikuti kursus. */
+export function canEnrollCourses(user) {
+  if (!user) return true; // Tamu diarahkan ke login saat klik ikuti
+  return user.role === 'student' && user.teacher_status === 'none';
+}
+
 export const isAdmin = (user) => !!user && user.role === 'admin';
+export const isTeacherApplicant = (user) =>
+  !!user && user.role === 'student' && (user.teacher_status === 'pending' || user.teacher_status === 'rejected');
+
+/** Label peran yang konsisten dalam Bahasa Indonesia */
+export function getRoleLabel(user) {
+  if (!user) return 'Tamu';
+  if (user.role === 'admin') return 'Admin';
+  if (user.role === 'teacher') return 'Pengajar';
+  if (user.teacher_status === 'pending' || user.teacher_status === 'rejected') return 'Calon Pengajar';
+  return 'Siswa';
+}
 
 /** Penjaga halaman (server component). */
 export async function requirePageUser(check) {
   const user = await getCurrentUser();
   if (!user) redirect('/login');
-  if (check && !check(user)) redirect('/profile');
+  if (check && !check(user)) redirect('/');
   return user;
 }
