@@ -8,10 +8,19 @@ export default function EditProfileModal({ user }) {
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState(user.username || '');
   const [email, setEmail] = useState(user.email || '');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const handleClose = () => {
+    setOpen(false);
+    setError('');
+    setSuccess('');
+    setCurrentPassword('');
+    setNewPassword('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +32,7 @@ export default function EditProfileModal({ user }) {
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, newPassword }),
+        body: JSON.stringify({ username, email, currentPassword, newPassword }),
       });
 
       const data = await res.json();
@@ -31,11 +40,11 @@ export default function EditProfileModal({ user }) {
         setError(data.error || 'Gagal memperbarui profil.');
       } else {
         setSuccess('Profil berhasil diperbarui!');
+        setCurrentPassword('');
         setNewPassword('');
-        router.refresh(); // Memperbarui tampilan nama & email di halaman profil
+        router.refresh();
         setTimeout(() => {
-          setOpen(false);
-          setSuccess('');
+          handleClose();
         }, 1000);
       }
     } catch {
@@ -62,7 +71,7 @@ export default function EditProfileModal({ user }) {
               <h2 className="text-xl font-extrabold text-ink">Edit Profil</h2>
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
                 className="rounded-full px-2.5 py-1 text-sm font-bold text-stone-500 hover:bg-stone-100"
               >
                 ✕
@@ -103,7 +112,7 @@ export default function EditProfileModal({ user }) {
                 />
               </div>
 
-              <div>
+              <div className="border-t border-stone-100 pt-3">
                 <label className="mb-1 block text-sm font-bold text-stone-700">
                   Password Baru <span className="font-normal text-stone-400">(opsional)</span>
                 </label>
@@ -116,10 +125,27 @@ export default function EditProfileModal({ user }) {
                 />
               </div>
 
+              {/* Kolom Password Lama otomatis muncul saat Password Baru mulai diisi */}
+              {newPassword.length > 0 && (
+                <div>
+                  <label className="mb-1 block text-sm font-bold text-stone-700">
+                    Password Lama <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Masukkan password saat ini untuk konfirmasi"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="w-full rounded-xl border border-stone-300 px-3.5 py-2 text-sm focus:border-brand-500 focus:outline-none"
+                  />
+                </div>
+              )}
+
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={handleClose}
                   className="btn-outline"
                 >
                   Batal
