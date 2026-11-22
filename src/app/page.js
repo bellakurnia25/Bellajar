@@ -66,7 +66,7 @@ export default async function HomePage({ searchParams }) {
       <div className="page space-y-8">
         <section className="hero-gradient rounded-3xl p-8 text-white shadow-lg">
           <p className="text-sm font-bold uppercase tracking-wider text-white/90">Dasbor Pengajar BELLAJAR</p>
-          <h1 className="mt-1 text-3xl text-white sm:text-4xl">Halo, {user.username}! 👋</h1>
+          <h1 className="mt-1 text-3xl text-white sm:text-4xl">Halo, {user.username}! </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/95">
             Selamat datang di ruang pengajar. Kelola kurikulum, susun bab materi bergambar, dan pantau perkembangan belajar siswamu di sini.
           </p>
@@ -264,8 +264,8 @@ export default async function HomePage({ searchParams }) {
           <div className="relative z-10 pb-8 pt-10 sm:pt-14 lg:pb-14">
             {/* Poin 24: Sapaan Hai/Halo user dipindahkan ke dashboard/beranda user */}
             {user && (
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-1.5 text-sm font-extrabold text-brand-700 shadow-md">
-                <span>👋</span> Halo, {user.username}! Siap bertualang hari ini?
+              <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/95 px-4 py-1.5 text-2xl font-extrabold text-brand-700 shadow-md">
+                Halo, {user.username}! 
               </div>
             )}
 
