@@ -352,7 +352,6 @@ export default async function HomePage({ searchParams }) {
         {/* Poin 25: Tambahan galeri petualangan belajar ceria dengan ruang gambar agar tampilan lebih ramai & menarik bagi anak */}
         <section className="rounded-3xl border-2 border-sky-200 bg-gradient-to-r from-sky-50 via-brand-50 to-amber-50 p-6 sm:p-8 shadow-md">
           <div className="mb-6 text-center">
-            <span className="badge-amber">🎨 Dunia Belajar Penuh Warna</span>
             <h2 className="mt-2 text-2xl sm:text-3xl">Pilih Petualangan Favoritmu!</h2>
             <p className="mt-1 text-sm text-stone-600">Setiap tema punya gambar seru dan tantangan menyenangkan untuk anak.</p>
           </div>
@@ -396,9 +395,6 @@ export default async function HomePage({ searchParams }) {
         {/* Poin 4: Bagian kotak pemberitahuan Halo Ayah Bunda berwarna cerah senada dengan background hero */}
         <section className="hero-gradient grid gap-6 rounded-3xl p-8 text-white shadow-xl md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <span className="inline-block rounded-full bg-white/25 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
-              👨‍👩‍👧‍👦 Pendampingan Orang Tua
-            </span>
             <h2 className="mt-2 text-2xl text-white sm:text-3xl" style={{ textShadow: '0 2px 8px rgba(45,15,85,0.4)' }}>
               Halo Ayah &amp; Bunda!
             </h2>

@@ -16,9 +16,6 @@ export default async function Footer() {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <Logo />
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
-                ✨ Belajar Ceria Setiap Hari
-              </span>
             </div>
             <p className="max-w-xl text-sm text-stone-600">
               Platform pembelajaran daring interaktif untuk anak usia 5–11 tahun dengan materi bertahap per bab,
@@ -26,11 +23,7 @@ export default async function Footer() {
             </p>
 
             {/* Dekorasi elemen ceria */}
-            <div className="flex flex-wrap gap-2 pt-1 text-xs font-semibold text-brand-800">
-              <span className="rounded-full border border-brand-200 bg-white px-3 py-1 shadow-sm">🚀 Petualangan Bab</span>
-              <span className="rounded-full border border-sky-200 bg-white px-3 py-1 shadow-sm">🎨 Materi Kreatif</span>
-              <span className="rounded-full border border-emerald-200 bg-white px-3 py-1 shadow-sm">🏅 Sertifikat Kelulusan</span>
-            </div>
+         
           </div>
 
           {/* Kotak kanan menyesuaikan jenis user (Poin 26) */}
@@ -48,7 +41,7 @@ export default async function Footer() {
           ) : (
             <div className="rounded-3xl border-2 border-amber-300 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 p-5 shadow-md shadow-amber-200/50">
               <p className="flex items-center gap-2 text-sm font-extrabold text-amber-900">
-                <span>👨‍👩‍👧‍👦</span> Untuk Ayah &amp; Bunda
+              Untuk Ayah &amp; Bunda
               </p>
               <p className="mt-1.5 text-xs leading-relaxed text-amber-800">
                 Mohon dampingi si kecil saat belajar dan gunakan alamat email orang tua saat pendaftaran agar
@@ -58,9 +51,8 @@ export default async function Footer() {
           )}
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-brand-100 pt-5 text-xs text-stone-500">
+        <div className="border-t border-brand-100 bg-white py-6 text-center text-sm text-stone-600">
           <p>© {new Date().getFullYear()} BELLAJAR. Belajar Jadi Petualangan, Satu Bab Setiap Hari.</p>
-          <p className="font-semibold text-brand-700">✦ Cerdas · Kreatif · Ceria ✦</p>
         </div>
       </div>
     </footer>

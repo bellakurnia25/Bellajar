@@ -113,12 +113,12 @@ export default function UsersManager({ users, currentUserId }) {
               <div className="flex flex-wrap gap-3 pt-1">
                 {detailModal.teacher_cv_url && (
                   <a href={detailModal.teacher_cv_url} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm">
-                    📄 Buka Berkas CV
+                    Buka Berkas CV
                   </a>
                 )}
                 {detailModal.teacher_portfolio_url && (
                   <a href={detailModal.teacher_portfolio_url} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm">
-                    🎨 Buka Portofolio
+                    Buka Portofolio
                   </a>
                 )}
               </div>
