@@ -15,7 +15,6 @@ export default async function ProfilePage() {
   const roleLabel = getRoleLabel(user);
   const isStudent = canEnrollCourses(user);
   const isTeacher = canManageCourses(user) && user.role === 'teacher';
-  const isAdminUser = user.role === 'admin';
   const applicant = isTeacherApplicant(user);
 
   let enrolled = [];
@@ -67,7 +66,7 @@ export default async function ProfilePage() {
         </div>
       )}
 
-      {/* Kartu Identitas Profil */}
+      {/* Kartu Identitas Profil — hanya menampilkan tombol Edit Profil */}
       <section className="card flex flex-wrap items-center justify-between gap-4 p-6">
         <div className="flex items-center gap-4">
           {currentAvatar.startsWith('/uploads/') ? (
@@ -94,7 +93,7 @@ export default async function ProfilePage() {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div>
           <EditProfileModal
             user={{
               username: user.username,
@@ -105,9 +104,6 @@ export default async function ProfilePage() {
               teacher_bio: user.teacher_bio,
             }}
           />
-          {canManageCourses(user) && <Link href="/manage/courses" className="btn-outline">Kelola Kursus</Link>}
-          {isAdminUser && <Link href="/admin" className="btn-primary">Dasbor Admin</Link>}
-          {isStudent && <Link href="/courses" className="btn-primary">Cari Kursus</Link>}
         </div>
       </section>
 

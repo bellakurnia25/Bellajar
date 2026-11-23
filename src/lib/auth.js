@@ -62,9 +62,10 @@ export function canManageCourses(user) {
   );
 }
 
-/** Hanya Siswa murni (bukan Admin, bukan Teacher, bukan Calon Pengajar) yang boleh mengikuti kursus. */
+/** Siswa murni dan Admin boleh mengikuti kursus (Tamu diarahkan ke login saat klik ikuti). */
 export function canEnrollCourses(user) {
-  if (!user) return true; // Tamu diarahkan ke login saat klik ikuti
+  if (!user) return true;
+  if (user.role === 'admin') return true;
   return user.role === 'student' && user.teacher_status === 'none';
 }
 

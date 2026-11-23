@@ -18,13 +18,14 @@ export default async function Navbar() {
       { href: '/courses', label: 'Semua Kursus' },
     ];
   } else if (user.role === 'admin') {
-    // Admin: navbar pengelola menjadi navbar utama (tanpa menu umum/tamu)
+    // Admin: dapat mengelola sistem sekaligus mengikuti kursus
     homeHref = '/admin';
     navItems = [
       { href: '/admin', label: 'Dasbor Admin' },
       { href: '/admin/users', label: 'Pengguna' },
       { href: '/admin/categories', label: 'Kategori' },
       { href: '/manage/courses', label: 'Kelola Kursus' },
+      { href: '/courses', label: 'Jelajahi Kursus' },
       { href: '/profile', label: 'Profil' },
     ];
   } else if (canManageCourses(user)) {

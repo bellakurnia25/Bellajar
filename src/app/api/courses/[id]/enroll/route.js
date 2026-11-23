@@ -9,7 +9,7 @@ export async function POST(_req, { params }) {
   if (res) return res;
 
   if (!canEnrollCourses(user)) {
-    return fail('Akun Admin, Pengajar, atau Calon Pengajar tidak dapat mendaftar sebagai peserta kursus.', 403);
+    return fail('Akun Pengajar atau Calon Pengajar tidak dapat mendaftar sebagai peserta kursus.', 403);
   }
 
   const courseId = toId((await params).id);

@@ -66,7 +66,7 @@ export default async function CoursePage({ params, searchParams }) {
         <aside className="card h-fit space-y-4 p-6">
           {!allowedToEnroll ? (
             <div className="rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-800">
-              Akun <strong>Pengajar</strong>, <strong>Calon Pengajar</strong>, dan <strong>Admin</strong> tidak dapat mendaftar sebagai peserta kursus.
+              Akun <strong>Pengajar</strong> atau <strong>Calon Pengajar</strong> tidak dapat mendaftar sebagai peserta kursus.
             </div>
           ) : enrollment && status !== 'open' ? (
             <div className="rounded-2xl border border-amber-300 bg-amber-100 p-4 text-sm text-amber-800">
@@ -154,8 +154,20 @@ export default async function CoursePage({ params, searchParams }) {
       )}
 
       {!enrollment && isStaff && (
-        <div className="rounded-2xl border border-amber-300 bg-amber-100 px-4 py-3 text-sm text-amber-800">
-          Kamu melihat kursus ini sebagai pengelola. Progres belajar hanya tersimpan untuk siswa yang terdaftar.
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber-300 bg-amber-100 px-5 py-4 text-sm text-amber-900">
+          <div>
+            <p className="font-bold">Mode Pratinjau Pengelola</p>
+            <p>
+              {allowedToEnroll
+                ? 'Klik "Ikuti Kursus" jika ingin mengikuti kursus ini sebagai peserta agar progres belajar dan sertifikatmu tersimpan.'
+                : 'Progres belajar hanya tersimpan untuk peserta yang terdaftar.'}
+            </p>
+          </div>
+          {allowedToEnroll && status === 'open' && (
+            <div className="shrink-0">
+              <EnrollButton courseId={course.id} loggedIn={true} />
+            </div>
+          )}
         </div>
       )}
 
