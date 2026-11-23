@@ -21,16 +21,27 @@ function isTeacherApplicantUser(u) {
   return u.role === 'student' && (u.teacher_status === 'pending' || u.teacher_status === 'rejected');
 }
 
+const EMPTY_CREATE_FORM = {
+  username: '',
+  email: '',
+  password: '',
+  role: 'student',
+  teacher_specialty: '',
+  teacher_bio: '',
+};
+
 export default function UsersManager({ users, currentUserId }) {
   const router = useRouter();
   const [filter, setFilter] = useState('fixed'); // 'fixed' | 'pending'
+  const [creating, setCreating] = useState(null);
   const [editing, setEditing] = useState(null);
   const [reviewModal, setReviewModal] = useState(null); // { user, action: 'reject' | 'pending', note: '' }
   const [detailModal, setDetailModal] = useState(null);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [busy, setBusy] = useState(false);
 
-  // Kelompok 1: Pengguna Fiks (Admin, Siswa murni, dan Pengajar resmi - tanpa Calon Pengajar)
+  // Kelompok 1: Pengguna Resmi (Admin, Siswa murni, dan Pengajar resmi - tanpa Calon Pengajar)
   const fixedUsers = users.filter((u) => !isTeacherApplicantUser(u));
 
   // Kelompok 2: Calon Pengajar (Pending / Rejected)
@@ -38,11 +49,13 @@ export default function UsersManager({ users, currentUserId }) {
 
   const shown = filter === 'pending' ? applicantUsers : fixedUsers;
 
-  async function run(fn) {
+  async function run(fn, okMsg = '') {
     setBusy(true);
     setError('');
+    setSuccess('');
     try {
       await fn();
+      if (okMsg) setSuccess(okMsg);
       router.refresh();
     } catch (e) {
       setError(e.message);
@@ -52,7 +65,7 @@ export default function UsersManager({ users, currentUserId }) {
   }
 
   const approve = (u) =>
-    run(() => api(`/api/users/${u.id}/teacher`, 'POST', { action: 'approve' }));
+    run(() => api(`/api/users/${u.id}/teacher`, 'POST', { action: 'approve' }), `Akun "${u.username}" disetujui sebagai Pengajar.`);
 
   const submitReviewNote = (e) => {
     e.preventDefault();
@@ -63,40 +76,171 @@ export default function UsersManager({ users, currentUserId }) {
         note: reviewModal.note,
       });
       setReviewModal(null);
-    });
+    }, 'Catatan evaluasi berhasil dikirim.');
   };
 
   const remove = (u) => {
     if (!confirm(`Hapus pengguna "${u.username}"? Kursus, progres, dan sertifikat miliknya ikut terhapus.`)) return;
-    run(() => api(`/api/users/${u.id}`, 'DELETE'));
+    run(() => api(`/api/users/${u.id}`, 'DELETE'), `Pengguna "${u.username}" berhasil dihapus.`);
   };
+
+  async function create(e) {
+    e.preventDefault();
+    await run(async () => {
+      await api('/api/users', 'POST', creating);
+      setCreating(null);
+      setFilter('fixed');
+    }, 'Pengguna baru berhasil ditambahkan.');
+  }
 
   async function save(e) {
     e.preventDefault();
     await run(async () => {
       await api(`/api/users/${editing.id}`, 'PUT', editing);
       setEditing(null);
-    });
+    }, 'Perubahan pengguna berhasil disimpan.');
   }
 
   return (
     <div className="space-y-5">
       {error && <div className="alert-error">{error}</div>}
+      {success && (
+        <div className="rounded-2xl border border-emerald-300 bg-emerald-100 px-4 py-3 text-sm font-bold text-emerald-800">
+          {success}
+        </div>
+      )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setFilter('fixed')}
+            className={filter === 'fixed' ? 'btn-primary btn-sm' : 'btn-ghost btn-sm'}
+          >
+            Pengguna Resmi ({fixedUsers.length})
+          </button>
+          <button
+            onClick={() => setFilter('pending')}
+            className={filter === 'pending' ? 'btn-primary btn-sm' : 'btn-ghost btn-sm'}
+          >
+            Calon Pengajar ({applicantUsers.length})
+          </button>
+        </div>
+
         <button
-          onClick={() => setFilter('fixed')}
-          className={filter === 'fixed' ? 'btn-primary btn-sm' : 'btn-ghost btn-sm'}
+          type="button"
+          onClick={() => {
+            setEditing(null);
+            setError('');
+            setSuccess('');
+            setCreating(creating ? null : { ...EMPTY_CREATE_FORM });
+          }}
+          className="btn-green btn-sm"
         >
-          Pengguna Resmi ({fixedUsers.length})
-        </button>
-        <button
-          onClick={() => setFilter('pending')}
-          className={filter === 'pending' ? 'btn-primary btn-sm' : 'btn-ghost btn-sm'}
-        >
-          Calon Pengajar ({applicantUsers.length})
+          {creating ? 'Tutup Form' : '+ Tambah Pengguna'}
         </button>
       </div>
+
+      {/* Form Tambah Pengguna Baru */}
+      {creating && (
+        <form onSubmit={create} className="card space-y-4 border-2 border-emerald-200 p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-extrabold text-ink">Tambah Pengguna Baru</h2>
+            <span className="badge-green">Langsung Aktif</span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="label" htmlFor="cu-name">Nama Lengkap *</label>
+              <input
+                id="cu-name"
+                className="input"
+                required
+                minLength={3}
+                maxLength={50}
+                value={creating.username}
+                onChange={(e) => setCreating({ ...creating, username: e.target.value })}
+                placeholder="Contoh: Budi Santoso"
+              />
+            </div>
+
+            <div>
+              <label className="label" htmlFor="cu-email">Email *</label>
+              <input
+                id="cu-email"
+                type="email"
+                className="input"
+                required
+                value={creating.email}
+                onChange={(e) => setCreating({ ...creating, email: e.target.value })}
+                placeholder="nama@email.com"
+              />
+            </div>
+
+            <div>
+              <label className="label" htmlFor="cu-role">Peran *</label>
+              <select
+                id="cu-role"
+                className="input"
+                value={creating.role}
+                onChange={(e) => setCreating({ ...creating, role: e.target.value })}
+              >
+                <option value="student">Siswa</option>
+                <option value="teacher">Pengajar (Langsung Disetujui)</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="label" htmlFor="cu-pass">Kata Sandi *</label>
+              <input
+                id="cu-pass"
+                type="password"
+                required
+                minLength={6}
+                className="input"
+                value={creating.password}
+                onChange={(e) => setCreating({ ...creating, password: e.target.value })}
+                placeholder="Minimal 6 karakter"
+              />
+            </div>
+
+            {creating.role === 'teacher' && (
+              <>
+                <div className="sm:col-span-2">
+                  <label className="label" htmlFor="cu-spec">Bidang Keahlian Pengajar (opsional)</label>
+                  <input
+                    id="cu-spec"
+                    className="input"
+                    value={creating.teacher_specialty}
+                    onChange={(e) => setCreating({ ...creating, teacher_specialty: e.target.value })}
+                    placeholder="Contoh: Matematika Dasar, Pemrograman Anak"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="label" htmlFor="cu-bio">Biodata Singkat Pengajar (opsional)</label>
+                  <textarea
+                    id="cu-bio"
+                    rows={3}
+                    className="input"
+                    value={creating.teacher_bio}
+                    onChange={(e) => setCreating({ ...creating, teacher_bio: e.target.value })}
+                    placeholder="Latar belakang singkat atau pengalaman mengajar..."
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex gap-2 pt-1">
+            <button type="submit" disabled={busy} className="btn-green">
+              {busy ? 'Menyimpan...' : 'Buat Akun Pengguna'}
+            </button>
+            <button type="button" onClick={() => setCreating(null)} className="btn-ghost">
+              Batal
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Modal Detail Berkas Calon Pengajar (Poin 16) */}
       {detailModal && (
@@ -285,7 +429,7 @@ export default function UsersManager({ users, currentUserId }) {
                 <td colSpan={5} className="px-4 py-8 text-center text-stone-600">
                   {filter === 'pending'
                     ? 'Tidak ada calon pengajar yang menunggu peninjauan.'
-                    : 'Tidak ada pengguna fiks di daftar ini.'}
+                    : 'Tidak ada pengguna resmi di daftar ini.'}
                 </td>
               </tr>
             )}
@@ -350,15 +494,16 @@ export default function UsersManager({ users, currentUserId }) {
                       )}
                       <button
                         disabled={busy}
-                        onClick={() =>
+                        onClick={() => {
+                          setCreating(null);
                           setEditing({
                             id: u.id,
                             username: u.username,
                             email: u.email,
                             role: u.role,
                             password: '',
-                          })
-                        }
+                          });
+                        }}
                         className="btn-ghost btn-sm"
                       >
                         Edit
