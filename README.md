@@ -1,4 +1,4 @@
-# BELLAJAR – Platform Kursus Daring Anak SD
+# BELLAJAR – Platform Kursus Daring Anak 
 
 Next.js (App Router, JavaScript/JSX) · Tailwind CSS · PostgreSQL (`pg`, Raw SQL berparameter) · `bcryptjs` + HTTP-only cookie.
 
@@ -22,15 +22,8 @@ npm run seed
 npm run dev                            # http://localhost:3000
 ```
 
-Akun contoh (hasil `npm run seed`):
 
-| Peran   | Email              | Kata sandi |
-|---------|--------------------|------------|
-| Admin   | admin@bellajar.id  | admin123   |
-| Teacher | guru@bellajar.id   | guru123    |
-| Student | siswa@bellajar.id  | siswa123   |
 
-Ganti kata sandi ini sebelum dipakai di server publik.
 
 ## Struktur
 
