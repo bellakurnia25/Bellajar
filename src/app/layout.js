@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 export const metadata = {
   title: 'BELLAJAR – Kursus Daring untuk Anak SD',
   description:
-    'Platform kursus daring untuk anak usia 7–12 tahun, dengan pendampingan orang tua. Belajar seru, progres tersimpan, sertifikat otomatis.',
+    'Platform kursus daring untuk anak usia 5-11 tahun, dengan pendampingan orang tua. Belajar seru, progres tersimpan, sertifikat otomatis.',
 };
 
 export default function RootLayout({ children }) {

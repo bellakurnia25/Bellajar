@@ -57,6 +57,9 @@
   .card {
     @apply rounded-3xl border-2 border-brand-100 bg-white shadow-[0_12px_28px_-10px_rgba(140,40,130,0.22)] transition-shadow hover:shadow-[0_16px_34px_-10px_rgba(140,40,130,0.32)];
   }
+  .card-playful {
+    @apply card transition-transform duration-300 hover:-translate-y-1.5;
+  }
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
   }
@@ -85,17 +88,62 @@
   .soft-gradient {
     background: linear-gradient(180deg, #fde1fb 0%, #ede4fb 55%, #d6f0ff 100%);
   }
+  /* Menyambungkan Hero ke gambar tanpa garis patah & menempel pas hingga batas Footer */
+  .bg-doodle-section {
+    position: relative;
+    background-image:
+      linear-gradient(180deg, #63c5fd 0%, rgba(99, 197, 253, 0.45) 70px, rgba(99, 197, 253, 0) 170px),
+      url('/images/doodle-bg.jpg');
+    background-position: top center, bottom center;
+    background-repeat: no-repeat, no-repeat;
+    background-size: 100% 180px, 100% 100%;
+  }
 }
 
 @keyframes twinkle {
   0%, 100% { opacity: 0.35; transform: scale(0.8); }
   50% { opacity: 1; transform: scale(1.1); }
 }
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes peekFromLeft {
+  0% { opacity: 0; transform: translateX(-100%) rotate(-10deg); }
+  70% { opacity: 1; transform: translateX(8px) rotate(3deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0deg); }
+}
+
+@keyframes peekFromRight {
+  0% { opacity: 0; transform: translateX(100%) rotate(10deg); }
+  70% { opacity: 1; transform: translateX(-8px) rotate(-3deg); }
+  100% { opacity: 1; transform: translateX(0) rotate(0deg); }
+}
+
 .twinkle {
   animation: twinkle 3.2s ease-in-out infinite;
 }
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+.animate-peek-left {
+  animation: peekFromLeft 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.animate-peek-right {
+  animation: peekFromRight 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .twinkle { animation: none; opacity: 0.8; }
+  .twinkle,
+  .animate-float,
+  .animate-peek-left,
+  .animate-peek-right {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media print {

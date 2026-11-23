@@ -158,7 +158,7 @@ export default async function HomePage({ searchParams }) {
     );
   }
 
-  // 3. CALON PENGAJAR (pending / rejected) -> Halaman Status Pendaftaran & Evaluasi Admin (Poin 7, 8, 11, 22, 23)
+  // 3. CALON PENGAJAR (pending / rejected) -> Halaman Status Pendaftaran & Evaluasi Admin
   if (isTeacherApplicant(user)) {
     const isRejected = user.teacher_status === 'rejected';
     return (
@@ -262,7 +262,6 @@ export default async function HomePage({ searchParams }) {
 
         <div className="mx-auto grid max-w-7xl items-end gap-2 px-4 sm:px-5 lg:grid-cols-[1.15fr_1fr]">
           <div className="relative z-10 pb-8 pt-10 sm:pt-14 lg:pb-14">
-            {/* Poin 24: Sapaan Hai/Halo user dipindahkan ke dashboard/beranda user */}
             {user && (
               <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/95 px-4 py-1.5 text-2xl font-extrabold text-brand-700 shadow-md">
                 Halo, {user.username}! 
@@ -295,120 +294,147 @@ export default async function HomePage({ searchParams }) {
         </div>
       </section>
 
-      <div className="page !max-w-7xl space-y-14">
-        {/* Kategori */}
-        {categories.length > 0 && (
-          <section aria-labelledby="kategori">
-            <h2 id="kategori" className="mb-4 text-xl">Mau belajar apa hari ini?</h2>
-            <div className="flex flex-wrap gap-2">
-              {categories.map((c, i) => (
-                <Link
-                  key={c.id}
-                  href={`/?category=${c.id}`}
-                  className={`rounded-full border px-4 py-1.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5 ${CHIP_COLORS[i % CHIP_COLORS.length]} ${
-                    categoryId === c.id ? 'ring-2 ring-brand-600 ring-offset-2' : ''
-                  }`}
-                >
-                  {c.name}
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {searching && (
-          <section>
-            <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-2xl">Hasil pencarian ({results.length})</h2>
-              <Link href="/" className="text-sm font-semibold text-brand-700 hover:underline">Hapus filter</Link>
-            </div>
-            {results.length === 0 ? (
-              <div className="card p-8 text-center text-stone-600">
-                Belum ada kursus yang cocok. Coba kata kunci lain atau pilih kategori yang berbeda.
+      {/* Background gambar mulai dari "Mau belajar apa hari ini?" sampai perbatasan bawah Footer */}
+      <div className="bg-doodle-section">
+        <div className="page relative z-10 !max-w-7xl space-y-14 pb-16">
+          {/* Kategori */}
+          {categories.length > 0 && (
+            <section aria-labelledby="kategori">
+              <h2
+                id="kategori"
+                className="mb-4 inline-block rounded-2xl bg-white/90 px-4 py-1.5 text-xl shadow-sm"
+              >
+                Mau belajar apa hari ini?
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c, i) => (
+                  <Link
+                    key={c.id}
+                    href={`/?category=${c.id}`}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5 ${CHIP_COLORS[i % CHIP_COLORS.length]} ${
+                      categoryId === c.id ? 'ring-2 ring-brand-600 ring-offset-2' : ''
+                    }`}
+                  >
+                    {c.name}
+                  </Link>
+                ))}
               </div>
+            </section>
+          )}
+
+          {searching && (
+            <section>
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="inline-block rounded-2xl bg-white/90 px-4 py-1.5 text-2xl shadow-sm">
+                  Hasil pencarian ({results.length})
+                </h2>
+                <Link
+                  href="/"
+                  className="rounded-full bg-white/90 px-4 py-1.5 text-sm font-semibold text-brand-700 shadow-sm hover:underline"
+                >
+                  Hapus filter
+                </Link>
+              </div>
+              {results.length === 0 ? (
+                <div className="card p-8 text-center text-stone-600">
+                  Belum ada kursus yang cocok. Coba kata kunci lain atau pilih kategori yang berbeda.
+                </div>
+              ) : (
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {results.map((c) => <CourseCard key={c.id} course={c} loggedIn={!!user} />)}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Terpopuler */}
+          <section>
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="inline-block rounded-2xl bg-white/90 px-4 py-1.5 text-2xl shadow-sm">
+                5 Kursus Terpopuler
+              </h2>
+              <Link
+                href="/courses"
+                className="rounded-full bg-white/90 px-4 py-1.5 text-sm font-semibold text-brand-700 shadow-sm hover:underline"
+              >
+                Lihat semua kursus →
+              </Link>
+            </div>
+            {popular.length === 0 ? (
+              <div className="card p-8 text-center text-stone-600">Kursus pertama akan segera hadir. Nantikan ya!</div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {results.map((c) => <CourseCard key={c.id} course={c} loggedIn={!!user} />)}
+                {popular.map((c) => <CourseCard key={c.id} course={c} loggedIn={!!user} />)}
               </div>
             )}
           </section>
-        )}
 
-        {/* Terpopuler */}
-        <section>
-          <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-2xl">5 Kursus Terpopuler</h2>
-            <Link href="/courses" className="text-sm font-semibold text-brand-700 hover:underline">Lihat semua kursus →</Link>
-          </div>
-          {popular.length === 0 ? (
-            <div className="card p-8 text-center text-stone-600">Kursus pertama akan segera hadir. Nantikan ya!</div>
-          ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {popular.map((c) => <CourseCard key={c.id} course={c} loggedIn={!!user} />)}
+          {/* Galeri petualangan belajar ceria */}
+          <section className="rounded-3xl border-2 border-sky-200 bg-gradient-to-r from-sky-50/95 via-brand-50/95 to-amber-50/95 p-6 sm:p-8 shadow-md">
+            <div className="mb-6 text-center">
+              <h2 className="mt-2 text-2xl sm:text-3xl">Pilih Petualangan Favoritmu!</h2>
+              <p className="mt-1 text-sm text-stone-600">Setiap tema punya gambar seru dan tantangan menyenangkan untuk anak.</p>
             </div>
-          )}
-        </section>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+              {[
+                { img: '/images/courses/matematika.png', title: 'Matematika' },
+                { img: '/images/courses/bahasa.png', title: 'Bahasa' },
+                { img: '/images/courses/sains.png', title: 'Sains Cilik' },
+                { img: '/images/courses/seni.png', title: 'Seni & Warna' },
+                { img: '/images/courses/logika.png', title: 'Logika' },
+                { img: '/images/courses/keterampilan.png', title: 'Keterampilan' },
+              ].map((item) => (
+                <div key={item.title} className="card-playful flex flex-col items-center p-4 text-center">
+                  <img src={item.img} alt={item.title} className="h-20 w-20 object-contain drop-shadow" />
+                  <p className="mt-2 text-xs font-extrabold text-ink">{item.title}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-        {/* Poin 25: Tambahan galeri petualangan belajar ceria dengan ruang gambar agar tampilan lebih ramai & menarik bagi anak */}
-        <section className="rounded-3xl border-2 border-sky-200 bg-gradient-to-r from-sky-50 via-brand-50 to-amber-50 p-6 sm:p-8 shadow-md">
-          <div className="mb-6 text-center">
-            <h2 className="mt-2 text-2xl sm:text-3xl">Pilih Petualangan Favoritmu!</h2>
-            <p className="mt-1 text-sm text-stone-600">Setiap tema punya gambar seru dan tantangan menyenangkan untuk anak.</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {[
-              { img: '/images/courses/matematika.png', title: 'Matematika' },
-              { img: '/images/courses/bahasa.png', title: 'Bahasa' },
-              { img: '/images/courses/sains.png', title: 'Sains Cilik' },
-              { img: '/images/courses/seni.png', title: 'Seni & Warna' },
-              { img: '/images/courses/logika.png', title: 'Logika' },
-              { img: '/images/courses/keterampilan.png', title: 'Keterampilan' },
-            ].map((item) => (
-              <div key={item.title} className="card flex flex-col items-center p-4 text-center">
-                <img src={item.img} alt={item.title} className="h-20 w-20 object-contain drop-shadow" />
-                <p className="mt-2 text-xs font-extrabold text-ink">{item.title}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Kenapa BELLAJAR */}
-        <section aria-labelledby="kenapa">
-          <h2 id="kenapa" className="mb-5 text-2xl">Kenapa belajar di BELLAJAR?</h2>
-          <div className="grid gap-5 md:grid-cols-3">
-            {why.map((w) => (
-              <div key={w.title} className="card p-6">
-                <span className={`flex h-16 w-16 items-center justify-center rounded-2xl ${w.tone}`}>
-                  {w.image ? (
-                    <img src={w.image} alt="" className="h-12 w-12 object-contain" />
-                  ) : (
-                    <span className="text-3xl" aria-hidden="true">{w.emoji}</span>
-                  )}
-                </span>
-                <h3 className="mt-4 text-lg">{w.title}</h3>
-                <p className="mt-1 text-sm text-stone-600">{w.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Poin 4: Bagian kotak pemberitahuan Halo Ayah Bunda berwarna cerah senada dengan background hero */}
-        <section className="hero-gradient grid gap-6 rounded-3xl p-8 text-white shadow-xl md:grid-cols-[1fr_auto] md:items-center">
-          <div>
-            <h2 className="mt-2 text-2xl text-white sm:text-3xl" style={{ textShadow: '0 2px 8px rgba(45,15,85,0.4)' }}>
-              Halo Ayah &amp; Bunda!
+          {/* Kenapa BELLAJAR */}
+          <section aria-labelledby="kenapa">
+            <h2
+              id="kenapa"
+              className="mb-5 inline-block rounded-2xl bg-white/90 px-4 py-1.5 text-2xl text-brand-600 shadow-sm"
+            >
+              Kenapa belajar di BELLAJAR?
             </h2>
-            <p className="mt-2 max-w-2xl text-white/95" style={{ textShadow: '0 1px 6px rgba(45,15,85,0.35)' }}>
-              Bantu si kecil membuat akun menggunakan email orang tua. Dengan begitu progres belajar dan
-              sertifikatnya tersimpan dengan aman, dan Ayah &amp; Bunda bisa ikut memantau.
-            </p>
-          </div>
-          {!user && (
-            <Link href="/register" className="btn bg-white px-7 py-3 text-brand-700 shadow-lg hover:bg-amber-50">
-              Buat Akun Si Kecil
-            </Link>
-          )}
-        </section>
+            <div className="grid gap-5 md:grid-cols-3">
+              {why.map((w) => (
+                <div key={w.title} className="card-playful p-6">
+                  <span className={`flex h-16 w-16 items-center justify-center rounded-2xl ${w.tone}`}>
+                    {w.image ? (
+                      <img src={w.image} alt="" className="h-12 w-12 object-contain" />
+                    ) : (
+                      <span className="text-3xl" aria-hidden="true">{w.emoji}</span>
+                    )}
+                  </span>
+                  <h3 className="mt-4 text-lg">{w.title}</h3>
+                  <p className="mt-1 text-sm text-stone-600">{w.text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Bagian kotak pemberitahuan Halo Ayah Bunda */}
+          <section className="hero-gradient grid gap-6 rounded-3xl p-8 text-white shadow-xl md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <h2 className="mt-2 text-2xl text-white sm:text-3xl" style={{ textShadow: '0 2px 8px rgba(45,15,85,0.4)' }}>
+                Halo Ayah &amp; Bunda!
+              </h2>
+              <p className="mt-2 max-w-2xl text-white/95" style={{ textShadow: '0 1px 6px rgba(45,15,85,0.35)' }}>
+                Bantu si kecil membuat akun menggunakan email orang tua. Dengan begitu progres belajar dan
+                sertifikatnya tersimpan dengan aman, dan Ayah &amp; Bunda bisa ikut memantau.
+              </p>
+            </div>
+            {!user && (
+              <Link href="/register" className="btn bg-white px-7 py-3 text-brand-700 shadow-lg hover:bg-amber-50">
+                Buat Akun Si Kecil
+              </Link>
+            )}
+          </section>
+        </div>
       </div>
     </>
   );
