@@ -3,6 +3,25 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/client-api';
 
+function isValidUrlOrUploaded(value, isUploaded) {
+  const v = String(value || '').trim();
+  if (!v) return false;
+
+  // Tolak path lokal Windows/Mac atau file URI
+  if (/^[a-zA-Z]:\\|^file:\/\//i.test(v)) return false;
+
+  // Terima jika benar-benar berasal dari tombol unggah resmi aplikasi
+  if (isUploaded && v.startsWith('/uploads/')) return true;
+
+  // Jika input tautan manual, wajib format URL http:// atau https:// dengan domain valid
+  try {
+    const parsed = new URL(v);
+    return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && parsed.hostname.includes('.');
+  } catch {
+    return false;
+  }
+}
+
 export default function AuthForm({ mode, as = 'student', next = '/' }) {
   const router = useRouter();
   const isRegister = mode === 'register';
@@ -12,31 +31,52 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
     username: '',
     email: '',
     password: '',
+    confirmPassword: '',
     teacher_specialty: '',
     teacher_bio: '',
     teacher_cv_url: '',
     teacher_portfolio_url: '',
   });
+  const [uploadedFlags, setUploadedFlags] = useState({
+    teacher_cv_url: false,
+    teacher_portfolio_url: false,
+  });
   const [uploadingField, setUploadingField] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const set = (k) => (e) => {
+    setForm({ ...form, [k]: e.target.value });
+    if (k === 'teacher_cv_url' || k === 'teacher_portfolio_url') {
+      setUploadedFlags((prev) => ({ ...prev, [k]: false }));
+    }
+  };
 
-  function handleNextStep() {
-    setError('');
+  function validateAccountFields() {
     if (form.username.trim().length < 3) {
-      setError('Nama lengkap pengajar minimal 3 karakter.');
-      return;
+      return isTeacher
+        ? 'Nama lengkap pengajar minimal 3 karakter.'
+        : 'Nama panggilan si kecil minimal 3 karakter.';
     }
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      setError('Masukkan alamat email yang valid.');
-      return;
+      return 'Masukkan alamat email yang valid.';
     }
     if (form.password.length < 6 || !/(?=.*[A-Za-z])(?=.*\d)/.test(form.password)) {
-      setError('Kata sandi minimal 6 karakter dan wajib mengandung kombinasi huruf serta angka.');
+      return 'Kata sandi minimal 6 karakter dan wajib mengandung kombinasi huruf serta angka.';
+    }
+    if (form.password !== form.confirmPassword) {
+      return 'Konfirmasi kata sandi tidak cocok dengan kata sandi.';
+    }
+    return '';
+  }
+
+  function handleNextStep() {
+    const validationErr = validateAccountFields();
+    if (validationErr) {
+      setError(validationErr);
       return;
     }
+    setError('');
     setStep(2);
   }
 
@@ -52,6 +92,7 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Gagal mengunggah berkas.');
       setForm((prev) => ({ ...prev, [field]: data.url }));
+      setUploadedFlags((prev) => ({ ...prev, [field]: true }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -59,19 +100,45 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
     }
   }
 
+  function clearUploadedFile(field) {
+    setForm((prev) => ({ ...prev, [field]: '' }));
+    setUploadedFlags((prev) => ({ ...prev, [field]: false }));
+  }
+
   async function submit(e) {
     e.preventDefault();
-    // Jika pengajar menekan Enter di Step 1, arahkan ke Step 2
     if (isRegister && isTeacher && step === 1) {
       handleNextStep();
       return;
     }
 
     setError('');
+
+    if (isRegister) {
+      const validationErr = validateAccountFields();
+      if (validationErr) {
+        setError(validationErr);
+        return;
+      }
+    }
+
+    if (isRegister && isTeacher) {
+      if (!isValidUrlOrUploaded(form.teacher_cv_url, uploadedFlags.teacher_cv_url)) {
+        setError('CV wajib berupa tautan URL yang valid (contoh: https://drive.google.com/...) atau diunggah melalui tombol Unggah Berkas CV.');
+        return;
+      }
+      if (!isValidUrlOrUploaded(form.teacher_portfolio_url, uploadedFlags.teacher_portfolio_url)) {
+        setError('Portofolio wajib berupa tautan URL yang valid (contoh: https://drive.google.com/...) atau diunggah melalui tombol Unggah Berkas Portofolio.');
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       await api(isRegister ? '/api/auth/register' : '/api/auth/login', 'POST', {
         ...form,
+        teacher_cv_url: form.teacher_cv_url.trim(),
+        teacher_portfolio_url: form.teacher_portfolio_url.trim(),
         as,
       });
       router.push(isRegister && isTeacher ? '/' : next);
@@ -83,6 +150,8 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
   }
 
   const showAccountFields = !(isRegister && isTeacher && step === 2);
+  const hasConfirmInput = isRegister && form.confirmPassword.length > 0;
+  const passwordsMatch = form.password === form.confirmPassword;
 
   return (
     <form onSubmit={submit} className="space-y-4">
@@ -107,7 +176,7 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
         </div>
       )}
 
-      {/* STEP 1: Data Akun (Muncul untuk Login, Siswa, atau Pengajar Step 1) */}
+      {/* STEP 1: Data Akun */}
       {showAccountFields && (
         <>
           {isRegister && (
@@ -153,15 +222,37 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
               onChange={set('password')}
               placeholder={isRegister ? 'Contoh: Belajar123' : 'Masukkan kata sandi'}
             />
-            {/* Poin 12: Keterangan syarat kata sandi */}
-            <p className="mt-1.5 text-xs text-stone-500">
-              Syarat kata sandi: minimal 6 karakter dan wajib mengandung kombinasi huruf serta angka.
-            </p>
+            {isRegister && (
+              <p className="mt-1.5 text-xs text-stone-500">
+                Syarat kata sandi: minimal 6 karakter dan wajib mengandung kombinasi huruf serta angka.
+              </p>
+            )}
           </div>
+
+          {isRegister && (
+            <div>
+              <label className="label" htmlFor="confirmPassword">Konfirmasi kata sandi</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                required
+                minLength={6}
+                className="input"
+                value={form.confirmPassword}
+                onChange={set('confirmPassword')}
+                placeholder="Ketik ulang kata sandi"
+              />
+              {hasConfirmInput && (
+                <p className={`mt-1.5 text-xs font-semibold ${passwordsMatch ? 'text-emerald-700' : 'text-red-600'}`}>
+                  {passwordsMatch ? '✓ Kata sandi cocok' : '✕ Kata sandi belum cocok'}
+                </p>
+              )}
+            </div>
+          )}
         </>
       )}
 
-      {/* STEP 2: Kelengkapan Berkas Pengajar (Muncul khusus Pengajar Step 2) */}
+      {/* STEP 2: Kelengkapan Berkas Pengajar */}
       {isRegister && isTeacher && step === 2 && (
         <div className="space-y-4 rounded-2xl border border-brand-200 bg-brand-50/50 p-4">
           <p className="text-xs font-extrabold uppercase tracking-wider text-brand-800">
@@ -189,7 +280,7 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
               required
               minLength={15}
               rows={3}
-              className="input"
+              className="input break-words"
               value={form.teacher_bio}
               onChange={set('teacher_bio')}
               placeholder="Ceritakan latar belakang pendidikan dan pengalaman membimbing anak..."
@@ -197,16 +288,18 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
           </div>
 
           <div>
-            <label className="label" htmlFor="teacher_cv_url">CV (Tautan Google Drive / PDF) *</label>
+            <label className="label" htmlFor="teacher_cv_url">CV (Tautan URL / Unggah Berkas) *</label>
             <input
               id="teacher_cv_url"
+              type="text"
               required
+              readOnly={uploadedFlags.teacher_cv_url}
               className="input"
               value={form.teacher_cv_url}
               onChange={set('teacher_cv_url')}
-              placeholder="Tempel tautan CV atau unggah berkas di bawah"
+              placeholder="Tempel tautan https://... atau unggah berkas di bawah"
             />
-            <div className="mt-1.5 flex items-center gap-2">
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <label className="btn-outline btn-sm cursor-pointer">
                 {uploadingField === 'teacher_cv_url' ? 'Mengunggah CV...' : 'Unggah Berkas CV (PDF/Gambar)'}
                 <input
@@ -217,22 +310,33 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
                   onChange={(e) => handleFileUpload('teacher_cv_url', e.target.files?.[0])}
                 />
               </label>
+              {uploadedFlags.teacher_cv_url && (
+                <button
+                  type="button"
+                  onClick={() => clearUploadedFile('teacher_cv_url')}
+                  className="btn-ghost btn-sm text-xs"
+                >
+                  Ganti dengan Tautan URL
+                </button>
+              )}
             </div>
           </div>
 
           <div>
-            <label className="label" htmlFor="teacher_portfolio_url">Portofolio Karya / Materi *</label>
+            <label className="label" htmlFor="teacher_portfolio_url">Portofolio Karya / Materi (Tautan URL / Unggah Berkas) *</label>
             <input
               id="teacher_portfolio_url"
+              type="text"
               required
+              readOnly={uploadedFlags.teacher_portfolio_url}
               className="input"
               value={form.teacher_portfolio_url}
               onChange={set('teacher_portfolio_url')}
-              placeholder="Tempel tautan portofolio atau unggah berkas di bawah"
+              placeholder="Tempel tautan https://... atau unggah berkas di bawah"
             />
-            <div className="mt-1.5 flex items-center gap-2">
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <label className="btn-outline btn-sm cursor-pointer">
-                {uploadingField === 'teacher_portfolio_url' ? 'Mengunggah...' : 'Unggah Berkas Portofolio'}
+                {uploadingField === 'teacher_portfolio_url' ? 'Mengunggah Portofolio...' : 'Unggah Berkas Portofolio (PDF/Gambar)'}
                 <input
                   type="file"
                   accept=".pdf,image/png,image/jpeg,image/webp"
@@ -241,6 +345,15 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
                   onChange={(e) => handleFileUpload('teacher_portfolio_url', e.target.files?.[0])}
                 />
               </label>
+              {uploadedFlags.teacher_portfolio_url && (
+                <button
+                  type="button"
+                  onClick={() => clearUploadedFile('teacher_portfolio_url')}
+                  className="btn-ghost btn-sm text-xs"
+                >
+                  Ganti dengan Tautan URL
+                </button>
+              )}
             </div>
           </div>
         </div>

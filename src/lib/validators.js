@@ -43,7 +43,7 @@ export function parseContent(b) {
   if (title.length < 2 || title.length > 150) return { error: 'Judul bab harus 2–150 karakter.' };
   if (body.length < 1) return { error: 'Isi materi tidak boleh kosong.' };
   if (image_url && !image_url.startsWith('/uploads/') && !/^https?:\/\//i.test(image_url)) {
-    return { error: 'Tautan gambar materi harus diawali http://, https://, atau unggahan lokal.' };
+    return { error: 'Tautan media materi harus diawali http://, https://, atau unggahan gambar lokal.' };
   }
   let order_index = null;
   if (b.order_index !== undefined && b.order_index !== null && b.order_index !== '') {

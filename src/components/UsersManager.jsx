@@ -30,6 +30,65 @@ const EMPTY_CREATE_FORM = {
   teacher_bio: '',
 };
 
+/* Kumpulan Ikon Vektor SVG (bukan emoticon & bukan teks) */
+function IconFile() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <line x1="10" y1="9" x2="8" y2="9" />
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function IconClock() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 15 14" />
+    </svg>
+  );
+}
+
+function IconX() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function IconPencil() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+      <path d="m15 5 4 4" />
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
+    </svg>
+  );
+}
+
 export default function UsersManager({ users, currentUserId }) {
   const router = useRouter();
   const [filter, setFilter] = useState('fixed'); // 'fixed' | 'pending'
@@ -242,34 +301,35 @@ export default function UsersManager({ users, currentUserId }) {
         </form>
       )}
 
-      {/* Modal Detail Berkas Calon Pengajar (Poin 16) */}
+      {/* Modal Detail Berkas Calon Pengajar */}
       {detailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl space-y-4">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto overflow-x-hidden rounded-3xl bg-white p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-stone-100 pb-3">
               <h2 className="text-xl font-extrabold text-ink">Berkas Calon Pengajar</h2>
               <button
                 type="button"
                 onClick={() => setDetailModal(null)}
-                className="rounded-full px-2.5 py-1 text-sm font-bold text-stone-500 hover:bg-stone-100"
+                aria-label="Tutup modal"
+                className="rounded-full p-1.5 text-stone-500 hover:bg-stone-100"
               >
-                ✕
+                <IconX />
               </button>
             </div>
             <div className="space-y-3 text-sm">
               <div>
                 <p className="font-bold text-stone-500">Nama &amp; Email</p>
-                <p className="font-semibold text-ink">
+                <p className="break-words font-semibold text-ink">
                   {detailModal.username} ({detailModal.email})
                 </p>
               </div>
               <div>
                 <p className="font-bold text-stone-500">Bidang yang Dilamar</p>
-                <p className="font-semibold text-brand-700">{detailModal.teacher_specialty || '-'}</p>
+                <p className="break-words font-semibold text-brand-700">{detailModal.teacher_specialty || '-'}</p>
               </div>
               <div>
                 <p className="font-bold text-stone-500">Biodata Singkat</p>
-                <p className="whitespace-pre-line rounded-2xl bg-stone-50 p-3 text-stone-700">
+                <p className="mt-1 whitespace-pre-wrap break-all rounded-2xl bg-stone-50 p-3 text-stone-700">
                   {detailModal.teacher_bio || '-'}
                 </p>
               </div>
@@ -298,7 +358,7 @@ export default function UsersManager({ users, currentUserId }) {
               {detailModal.teacher_review_note && (
                 <div className="rounded-2xl border border-amber-300 bg-amber-50 p-3">
                   <p className="font-bold text-amber-900">Catatan Evaluasi Sebelumnya:</p>
-                  <p className="text-amber-800">{detailModal.teacher_review_note}</p>
+                  <p className="whitespace-pre-wrap break-words text-amber-800">{detailModal.teacher_review_note}</p>
                 </div>
               )}
             </div>
@@ -311,7 +371,7 @@ export default function UsersManager({ users, currentUserId }) {
         </div>
       )}
 
-      {/* Modal Alasan Reject / Pending (Poin 22) */}
+      {/* Modal Alasan Reject / Pending */}
       {reviewModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
           <form onSubmit={submitReviewNote} className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl space-y-4">
@@ -444,7 +504,7 @@ export default function UsersManager({ users, currentUserId }) {
                     </p>
                     <p className="text-xs text-stone-500">{u.email}</p>
                     {u.teacher_specialty && (
-                      <p className="mt-0.5 text-xs font-semibold text-brand-700">Bidang: {u.teacher_specialty}</p>
+                      <p className="mt-0.5 break-words text-xs font-semibold text-brand-700">Bidang: {u.teacher_specialty}</p>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -455,44 +515,57 @@ export default function UsersManager({ users, currentUserId }) {
                   </td>
                   <td className="px-4 py-3 text-stone-600">{u.created_label}</td>
                   <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex items-center gap-1.5">
                       {isApplicant && (
                         <>
                           <button
+                            type="button"
                             disabled={busy}
                             onClick={() => setDetailModal(u)}
-                            className="btn-outline btn-sm"
+                            title="Lihat Berkas"
+                            aria-label="Lihat Berkas"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-brand-200 bg-white text-brand-700 transition hover:bg-brand-50 disabled:opacity-50"
                           >
-                            Lihat Berkas
+                            <IconFile />
                           </button>
                           <button
+                            type="button"
                             disabled={busy}
                             onClick={() => approve(u)}
-                            className="btn-green btn-sm"
+                            title="Setujui Pengajar"
+                            aria-label="Setujui Pengajar"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white transition hover:bg-emerald-700 disabled:opacity-50"
                           >
-                            Setujui
+                            <IconCheck />
                           </button>
                           <button
+                            type="button"
                             disabled={busy}
                             onClick={() =>
                               setReviewModal({ user: u, action: 'pending', note: u.teacher_review_note || '' })
                             }
-                            className="btn-ghost btn-sm"
+                            title="Pending + Catatan Evaluasi"
+                            aria-label="Pending + Catatan Evaluasi"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-amber-300 bg-amber-50 text-amber-800 transition hover:bg-amber-100 disabled:opacity-50"
                           >
-                            Pending + Catatan
+                            <IconClock />
                           </button>
                           <button
+                            type="button"
                             disabled={busy}
                             onClick={() =>
                               setReviewModal({ user: u, action: 'reject', note: u.teacher_review_note || '' })
                             }
-                            className="btn-danger btn-sm"
+                            title="Tolak + Alasan"
+                            aria-label="Tolak + Alasan"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-red-200 bg-red-50 text-red-700 transition hover:bg-red-100 disabled:opacity-50"
                           >
-                            Tolak + Alasan
+                            <IconX />
                           </button>
                         </>
                       )}
                       <button
+                        type="button"
                         disabled={busy}
                         onClick={() => {
                           setCreating(null);
@@ -504,13 +577,22 @@ export default function UsersManager({ users, currentUserId }) {
                             password: '',
                           });
                         }}
-                        className="btn-ghost btn-sm"
+                        title="Edit Pengguna"
+                        aria-label="Edit Pengguna"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 transition hover:bg-stone-100 disabled:opacity-50"
                       >
-                        Edit
+                        <IconPencil />
                       </button>
                       {u.id !== currentUserId && (
-                        <button disabled={busy} onClick={() => remove(u)} className="btn-danger btn-sm">
-                          Hapus
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => remove(u)}
+                          title="Hapus Pengguna"
+                          aria-label="Hapus Pengguna"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-red-600 text-white transition hover:bg-red-700 disabled:opacity-50"
+                        >
+                          <IconTrash />
                         </button>
                       )}
                     </div>

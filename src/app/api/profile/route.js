@@ -6,6 +6,26 @@ import { ok, fail, readJson } from '@/lib/http';
 import { validatePassword } from '@/lib/validators';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UPLOADED_DOC_RE = /^\/uploads\/docs\/[a-zA-Z0-9._-]+$/;
+
+function isValidUrlOrUploadedDoc(value) {
+  const v = String(value || '').trim();
+  if (!v) return false;
+
+  // Tolak path lokal komputer (Windows/Mac/file URI)
+  if (/^[a-zA-Z]:\\|^file:\/\//i.test(v)) return false;
+
+  // Terima path resmi hasil upload aplikasi (/uploads/docs/namafile.ext)
+  if (UPLOADED_DOC_RE.test(v)) return true;
+
+  // Selain itu wajib format URL http:// atau https:// yang valid dan memiliki domain
+  try {
+    const parsed = new URL(v);
+    return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && parsed.hostname.includes('.');
+  } catch {
+    return false;
+  }
+}
 
 export async function PATCH(request) {
   try {
@@ -27,8 +47,12 @@ export async function PATCH(request) {
 
       if (specialty.length < 3) return fail('Bidang keahlian pengajar minimal 3 karakter.');
       if (bio.length < 15) return fail('Biodata singkat minimal 15 karakter.');
-      if (!cvUrl) return fail('Berkas atau tautan CV wajib diisi.');
-      if (!portfolioUrl) return fail('Berkas atau tautan portofolio wajib diisi.');
+      if (!isValidUrlOrUploadedDoc(cvUrl)) {
+        return fail('CV wajib berupa tautan URL yang valid (https://...) atau unggahan berkas resmi.');
+      }
+      if (!isValidUrlOrUploadedDoc(portfolioUrl)) {
+        return fail('Portofolio wajib berupa tautan URL yang valid (https://...) atau unggahan berkas resmi.');
+      }
 
       await queryOne(
         `UPDATE users

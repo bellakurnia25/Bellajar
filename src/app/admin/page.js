@@ -28,14 +28,23 @@ export default async function AdminPage() {
     <div className="page space-y-8">
       <div className="hero-gradient rounded-3xl p-7 text-white shadow-lg">
         <p className="text-xs font-bold uppercase tracking-wider text-white/90">Panel Pengelola Utama</p>
-        <h1 className="mt-1 text-3xl text-white">Halo, Admin {admin.username}! 👋</h1>
+        <h1 className="mt-1 text-3xl text-white">Halo, Admin {admin.username}! </h1>
         <p className="mt-1 text-sm text-white/95">Kelola pengguna, persetujuan calon pengajar, kategori, dan seluruh kursus di BELLAJAR.</p>
       </div>
 
       {s.pending > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-amber-300 bg-amber-100 px-5 py-4 text-amber-900 shadow-sm">
-          <p className="font-bold">{s.pending} calon pengajar menunggu peninjauan berkas.</p>
-          <Link href="/admin/users" className="btn-primary btn-sm">Tinjau Sekarang</Link>
+        <div className="flex flex-col justify-between gap-4 rounded-3xl border-2 border-amber-300 bg-amber-100 px-6 py-6 text-amber-950 shadow-sm sm:flex-row sm:items-center sm:px-8 sm:py-7">
+          <div className="space-y-1.5">
+            <p className="text-lg font-extrabold">
+              {s.pending} calon pengajar menunggu peninjauan berkas.
+            </p>
+            <p className="text-sm font-medium text-amber-800">
+              Segera periksa kelengkapan biodata, CV, dan portofolio pelamar sebelum memberikan persetujuan.
+            </p>
+          </div>
+          <Link href="/admin/users" className="btn-primary shrink-0 px-6 py-2.5">
+            Tinjau Sekarang
+          </Link>
         </div>
       )}
 

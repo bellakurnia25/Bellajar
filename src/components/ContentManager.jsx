@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/client-api';
+import { toYoutubeEmbedUrl, toYoutubeThumbnailUrl } from '@/lib/youtube';
 
 export default function ContentManager({ courseId, contents }) {
   const router = useRouter();
@@ -84,6 +85,8 @@ export default function ContentManager({ courseId, contents }) {
     }
   }
 
+  const previewEmbedUrl = form?.image_url ? toYoutubeEmbedUrl(form.image_url) : null;
+
   return (
     <div className="space-y-5">
       {error && !form && <div className="alert-error">{error}</div>}
@@ -104,15 +107,15 @@ export default function ContentManager({ courseId, contents }) {
             </div>
           </div>
 
-          {/* Poin 15: Space untuk menginput atau mengganti gambar materi */}
+          {/* Media Materi: Gambar Ilustrasi atau Link Video YouTube */}
           <div className="rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50/40 p-4">
-            <label className="label" htmlFor="ct-image">Gambar Ilustrasi Materi (opsional)</label>
+            <label className="label" htmlFor="ct-image">Media Materi: Gambar atau Video YouTube (opsional)</label>
             <p className="mb-2 text-xs text-stone-600">
-              Tambahkan gambar agar materi lebih menarik dan mudah dipahami anak-anak.
+              Unggah gambar ilustrasi, tempel tautan gambar, atau tempel tautan video YouTube (misal: https://www.youtube.com/watch?v=...) agar langsung terputar di halaman belajar.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="btn-outline btn-sm cursor-pointer">
-                {uploading ? 'Mengunggah gambar...' : form.image_url ? 'Ganti Gambar Materi' : 'Unggah Gambar Materi'}
+                {uploading ? 'Mengunggah gambar...' : 'Unggah Gambar'}
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp,image/gif"
@@ -127,7 +130,7 @@ export default function ContentManager({ courseId, contents }) {
                 className="input flex-1"
                 value={form.image_url}
                 onChange={set('image_url')}
-                placeholder="Atau tempel tautan gambar (https://...)"
+                placeholder="Tempel link YouTube atau tautan gambar (https://...)"
               />
               {form.image_url && (
                 <button
@@ -135,17 +138,32 @@ export default function ContentManager({ courseId, contents }) {
                   onClick={() => setForm({ ...form, image_url: '' })}
                   className="btn-danger btn-sm"
                 >
-                  Hapus Gambar
+                  Hapus Media
                 </button>
               )}
             </div>
+
             {form.image_url && (
               <div className="mt-3">
-                <img
-                  src={form.image_url}
-                  alt="Pratinjau gambar materi"
-                  className="max-h-48 rounded-2xl border border-brand-200 object-contain bg-white p-2 shadow-sm"
-                />
+                {previewEmbedUrl ? (
+                  <div className="max-w-lg overflow-hidden rounded-2xl border border-brand-200 bg-black shadow-sm">
+                    <div className="aspect-video w-full">
+                      <iframe
+                        src={previewEmbedUrl}
+                        title="Pratinjau video YouTube"
+                        className="h-full w-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src={form.image_url}
+                    alt="Pratinjau gambar materi"
+                    className="max-h-48 rounded-2xl border border-brand-200 object-contain bg-white p-2 shadow-sm"
+                  />
+                )}
               </div>
             )}
           </div>
@@ -165,24 +183,34 @@ export default function ContentManager({ courseId, contents }) {
         <div className="card p-8 text-center text-stone-600">Belum ada bab. Tambahkan bab pertama agar siswa bisa mulai belajar.</div>
       ) : (
         <ol className="space-y-3">
-          {contents.map((c) => (
-            <li key={c.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 font-bold text-brand-700">{c.order_index}</span>
-                {c.image_url && (
-                  <img src={c.image_url} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover border border-brand-100" />
-                )}
-                <div className="min-w-0">
-                  <p className="font-bold">{c.title}</p>
-                  <p className="truncate text-sm text-stone-500">{c.body}</p>
+          {contents.map((c) => {
+            const ytThumb = c.image_url ? toYoutubeThumbnailUrl(c.image_url) : null;
+            return (
+              <li key={c.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 font-bold text-brand-700">{c.order_index}</span>
+                  {c.image_url && (
+                    <img
+                      src={ytThumb || c.image_url}
+                      alt=""
+                      className="h-12 w-12 shrink-0 rounded-xl border border-brand-100 object-cover"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-bold">{c.title}</p>
+                      {ytThumb && <span className="badge-amber">Video YouTube</span>}
+                    </div>
+                    <p className="truncate text-sm text-stone-500">{c.body}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <button disabled={busy} onClick={() => openEdit(c)} className="btn-ghost btn-sm">Edit</button>
-                <button disabled={busy} onClick={() => remove(c)} className="btn-danger btn-sm">Hapus</button>
-              </div>
-            </li>
-          ))}
+                <div className="flex gap-2">
+                  <button disabled={busy} onClick={() => openEdit(c)} className="btn-ghost btn-sm">Edit</button>
+                  <button disabled={busy} onClick={() => remove(c)} className="btn-danger btn-sm">Hapus</button>
+                </div>
+              </li>
+            );
+          })}
         </ol>
       )}
     </div>

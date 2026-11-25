@@ -169,7 +169,7 @@ export default async function HomePage({ searchParams }) {
               <span className={isRejected ? 'badge-red' : 'badge-amber'}>
                 {isRejected ? 'Status: Perlu Perbaikan / Ditolak' : 'Status: Calon Pengajar'}
               </span>
-              <h1 className="mt-2 text-2xl sm:text-3xl">Halo, {user.username}! 👋</h1>
+              <h1 className="mt-2 text-2xl sm:text-3xl">Halo, {user.username}! </h1>
             </div>
             <Link href="/profile" className="btn-outline btn-sm">Lihat Profil</Link>
           </div>
@@ -195,15 +195,22 @@ export default async function HomePage({ searchParams }) {
               <p className="text-xs font-extrabold uppercase tracking-wider text-brand-800">
                 Catatan / Alasan Evaluasi dari Admin:
               </p>
-              <p className="mt-1.5 whitespace-pre-line text-sm font-medium text-ink">
+              <p className="mt-1.5 whitespace-pre-line break-words text-sm font-medium text-ink">
                 {user.teacher_review_note}
               </p>
             </div>
           )}
 
           <div className="rounded-2xl bg-stone-50 p-4 text-sm space-y-2">
-            <p><strong>Bidang yang Dilamar:</strong> {user.teacher_specialty || '-'}</p>
-            <p><strong>Biodata:</strong> {user.teacher_bio || '-'}</p>
+            <p className="break-words">
+              <strong>Bidang yang Dilamar:</strong> {user.teacher_specialty || '-'}
+            </p>
+            <div>
+              <strong>Biodata:</strong>
+              <p className="mt-1 whitespace-pre-wrap break-all text-stone-700">
+                {user.teacher_bio || '-'}
+              </p>
+            </div>
             <div className="flex flex-wrap gap-3 pt-1">
               {user.teacher_cv_url && (
                 <a href={user.teacher_cv_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-brand-700 underline">

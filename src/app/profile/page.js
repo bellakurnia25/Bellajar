@@ -48,8 +48,10 @@ export default async function ProfilePage() {
     );
   }
 
-  const justApproved =
+  // Banner "Buat Kursus Pertamamu" hanya tampil jika belum memiliki kursus sama sekali
+  const showFirstCourseBanner =
     user.role === 'teacher' &&
+    teacherCourses.length === 0 &&
     user.approved_at &&
     Date.now() - new Date(user.approved_at).getTime() < 24 * 60 * 60 * 1000;
 
@@ -58,7 +60,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="page space-y-8">
-      {justApproved && (
+      {showFirstCourseBanner && (
         <div className="rounded-3xl border border-emerald-300 bg-emerald-100 px-6 py-5 text-emerald-700 shadow-sm">
           <p className="text-xl font-extrabold">Selamat Datang, Pengajar!</p>
           <p>Akunmu sudah disetujui Admin. Sekarang kamu bisa membuat dan mengelola kursus sendiri.</p>
@@ -84,7 +86,7 @@ export default async function ProfilePage() {
             <h1 className="text-2xl">{user.username}</h1>
             <p className="text-sm text-stone-600">{user.email}</p>
             {user.teacher_specialty && (
-              <p className="mt-0.5 text-xs font-bold text-brand-700">Bidang: {user.teacher_specialty}</p>
+              <p className="mt-0.5 break-words text-xs font-bold text-brand-700">Bidang: {user.teacher_specialty}</p>
             )}
             <div className="mt-2 flex flex-wrap gap-2">
               <span className="badge-stone">{roleLabel}</span>
@@ -107,7 +109,7 @@ export default async function ProfilePage() {
         </div>
       </section>
 
-      {/* Poin 11, 22, 23: Status pendaftaran pengajar (Calon Pengajar) */}
+      {/* Status pendaftaran pengajar (Calon Pengajar) */}
       {applicant && (
         <section className="space-y-4">
           {user.teacher_status === 'pending' ? (
@@ -129,7 +131,9 @@ export default async function ProfilePage() {
               <p className="text-xs font-extrabold uppercase tracking-wider text-brand-800">
                 Catatan Evaluasi dari Admin:
               </p>
-              <p className="mt-1 text-sm font-medium text-ink">{user.teacher_review_note}</p>
+              <p className="mt-1 whitespace-pre-wrap break-words text-sm font-medium text-ink">
+                {user.teacher_review_note}
+              </p>
             </div>
           )}
 
@@ -137,7 +141,7 @@ export default async function ProfilePage() {
         </section>
       )}
 
-      {/* Poin 13: Hanya Siswa yang melihat daftar kursus yang diikuti */}
+      {/* Hanya Siswa yang melihat daftar kursus yang diikuti */}
       {isStudent && (
         <section>
           <h2 className="mb-4 text-2xl">Kursus yang Kuikuti</h2>
@@ -166,13 +170,13 @@ export default async function ProfilePage() {
         </section>
       )}
 
-      {/* Poin 10: Tampilan khusus Pengajar */}
+      {/* Tampilan khusus Pengajar */}
       {isTeacher && (
         <section className="space-y-6">
           {user.teacher_bio && (
             <div className="card p-6">
               <h2 className="text-lg">Biodata Pengajar</h2>
-              <p className="mt-2 whitespace-pre-line text-sm text-stone-700">{user.teacher_bio}</p>
+              <p className="mt-2 whitespace-pre-wrap break-all text-sm text-stone-700">{user.teacher_bio}</p>
             </div>
           )}
 

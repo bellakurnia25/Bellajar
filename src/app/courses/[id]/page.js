@@ -5,6 +5,7 @@ import { queryOne, query } from '@/lib/db';
 import { getCourses, getContents } from '@/lib/queries';
 import { toId } from '@/lib/http';
 import { pct, accessStatus, accessLabel, formatDate } from '@/lib/utils';
+import { toYoutubeEmbedUrl } from '@/lib/youtube';
 import ProgressBar from '@/components/ProgressBar';
 import EnrollButton from '@/components/EnrollButton';
 import MarkDoneButton from '@/components/MarkDoneButton';
@@ -115,8 +116,8 @@ export default async function CoursePage({ params, searchParams }) {
     null;
   const activeIndex = active ? contents.findIndex((c) => c.id === active.id) : -1;
   const nextContent = activeIndex >= 0 ? contents[activeIndex + 1] : null;
+  const activeYoutubeEmbedUrl = active?.image_url ? toYoutubeEmbedUrl(active.image_url) : null;
 
-  // Poin 9: Cek apakah ada bab sebelum bab aktif yang belum diselesaikan
   const isLocked =
     !!enrollment &&
     activeIndex > 0 &&
@@ -227,22 +228,34 @@ export default async function CoursePage({ params, searchParams }) {
                 <p className="text-sm font-bold text-brand-700">Bab {activeIndex + 1} dari {contents.length}</p>
                 <h2 className="mt-1 text-2xl sm:text-3xl">{active.title}</h2>
 
-                {/* Poin 9: Peringatan jika membuka bab lanjutan sebelum bab sebelumnya selesai */}
                 {isLocked && (
                   <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
                     ⚠️ Tidak dapat menyelesaikan bab ini jika bab sebelumnya belum diselesaikan. Selesaikan bab secara berurutan mulai dari bab pertama.
                   </div>
                 )}
 
-                {/* Poin 15: Tampilkan gambar materi jika tersedia */}
                 {active.image_url && (
-                  <div className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-brand-50/30 p-3">
-                    <img
-                      src={active.image_url}
-                      alt={active.title}
-                      className="mx-auto max-h-80 w-auto rounded-xl object-contain"
-                    />
-                  </div>
+                  activeYoutubeEmbedUrl ? (
+                    <div className="mt-5 overflow-hidden rounded-2xl border-2 border-brand-100 bg-black shadow-md">
+                      <div className="aspect-video w-full">
+                        <iframe
+                          src={activeYoutubeEmbedUrl}
+                          title={active.title}
+                          className="h-full w-full"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-brand-50/30 p-3">
+                      <img
+                        src={active.image_url}
+                        alt={active.title}
+                        className="mx-auto max-h-80 w-auto rounded-xl object-contain"
+                      />
+                    </div>
+                  )
                 )}
 
                 <div className="mt-5 whitespace-pre-line text-lg leading-relaxed text-stone-800">{active.body}</div>

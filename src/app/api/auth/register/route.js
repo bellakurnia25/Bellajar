@@ -5,6 +5,26 @@ import { ok, fail, readJson } from '@/lib/http';
 import { validatePassword } from '@/lib/validators';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UPLOADED_DOC_RE = /^\/uploads\/docs\/[a-zA-Z0-9._-]+$/;
+
+function isValidUrlOrUploadedDoc(value) {
+  const v = String(value || '').trim();
+  if (!v) return false;
+
+  // Tolak path lokal komputer (Windows/Mac/file URI)
+  if (/^[a-zA-Z]:\\|^file:\/\//i.test(v)) return false;
+
+  // Terima path resmi hasil upload aplikasi (/uploads/docs/namafile.ext)
+  if (UPLOADED_DOC_RE.test(v)) return true;
+
+  // Selain itu wajib format URL http:// atau https:// yang valid dan memiliki domain
+  try {
+    const parsed = new URL(v);
+    return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && parsed.hostname.includes('.');
+  } catch {
+    return false;
+  }
+}
 
 export async function POST(req) {
   try {
@@ -12,6 +32,7 @@ export async function POST(req) {
     const username = String(b?.username || '').trim();
     const email = String(b?.email || '').trim().toLowerCase();
     const password = String(b?.password || '');
+    const confirmPassword = String(b?.confirmPassword || '');
     const asTeacher = b?.as === 'teacher';
 
     const teacherSpecialty = String(b?.teacher_specialty || '').trim();
@@ -25,6 +46,13 @@ export async function POST(req) {
     const pwError = validatePassword(password);
     if (pwError) return fail(pwError);
 
+    if (!confirmPassword) {
+      return fail('Konfirmasi kata sandi wajib diisi.');
+    }
+    if (password !== confirmPassword) {
+      return fail('Konfirmasi kata sandi tidak cocok.');
+    }
+
     if (asTeacher) {
       if (teacherSpecialty.length < 3) {
         return fail('Bidang keahlian / posisi pengajar yang dilamar wajib diisi (minimal 3 karakter).');
@@ -32,11 +60,11 @@ export async function POST(req) {
       if (teacherBio.length < 15) {
         return fail('Biodata singkat wajib diisi (minimal 15 karakter).');
       }
-      if (!teacherCvUrl) {
-        return fail('Tautan atau berkas CV wajib dilampirkan.');
+      if (!isValidUrlOrUploadedDoc(teacherCvUrl)) {
+        return fail('CV wajib berupa tautan URL yang valid (https://...) atau unggahan berkas resmi.');
       }
-      if (!teacherPortfolioUrl) {
-        return fail('Tautan atau berkas portofolio wajib dilampirkan.');
+      if (!isValidUrlOrUploadedDoc(teacherPortfolioUrl)) {
+        return fail('Portofolio wajib berupa tautan URL yang valid (https://...) atau unggahan berkas resmi.');
       }
     }
 
