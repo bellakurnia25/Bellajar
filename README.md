@@ -1,7 +1,7 @@
 <div align="center">
 
   <!-- 🖼️ LOGO WEB BELLAJAR (Sesuaikan nama file & ekstensi dengan file gambarmu) -->
-<img src="./public/images/logo-bellajar.png" alt="Logo BELLAJAR" width="220" />
+<img src="./public/images/logo.png" alt="Logo BELLAJAR" width="220" />
 
   <h1>BELLAJAR 🚀✨</h1>
   <p><strong>Platform Kursus Daring Interaktif &amp; Ceria untuk Anak Usia 5–12 Tahun</strong></p>
@@ -103,3 +103,70 @@ Bellajar/
 ├── next.config.mjs       # Konfigurasi Next.js
 ├── package.json          # Daftar dependensi & skrip proyek
 └── tailwind.config.js    # Konfigurasi desain token warna & font Tailwind CSS
+
+```
+
+---
+
+## 🌐 API Endpoints Utama
+
+| Endpoint | Method | Akses | Deskripsi |
+| :--- | :---: | :---: | :--- |
+| `/api/auth/register` | `POST` | Publik | Registrasi akun Siswa atau Calon Pengajar beserta berkas lamaran |
+| `/api/auth/login` | `POST` | Publik | Autentikasi pengguna dan pembuatan sesi (*HTTP-only Cookie*) |
+| `/api/auth/logout` | `POST` | Login | Menghapus sesi login pengguna |
+| `/api/upload` | `POST` | Publik / Login | Mengunggah berkas CV, portofolio, atau gambar ilustrasi |
+| `/api/courses` | `GET / POST` | Publik / Tutor | Mengambil daftar kursus atau membuat kursus baru |
+| `/api/courses/[id]/enroll` | `POST` | Siswa / Admin | Mendaftarkan pengguna ke dalam kursus |
+| `/api/contents/[id]/complete` | `POST` | Siswa / Admin | Menandai bab selesai & memicu penerbitan sertifikat otomatis |
+| `/api/admin/teachers/[id]` | `PATCH` | Admin | Menyetujui atau menolak pengajuan calon pengajar beserta catatan |
+
+---
+
+## 🚀 Panduan Instalasi Lokal
+
+### Prasyarat (*Requirements*)
+* **Node.js** versi 18 atau lebih baru
+* **PostgreSQL** versi 14 atau lebih baru (lokal atau cloud seperti Supabase / Neon)
+
+### 1. Kloning Repositori
+```bash
+git clone https://github.com/bellakurnia25/Bellajar.git
+cd Bellajar
+```
+
+### 2. Instalasi Dependensi
+```bash
+npm install
+```
+
+### 3. Konfigurasi Variabel Lingkungan (`.env.local`)
+Buat file `.env.local` di root proyek dan sesuaikan kredensial PostgreSQL milikmu:
+```env
+DATABASE_URL="postgresql://postgres:password@localhost:5432/bellajar_db"
+AUTH_SECRET="rahasia_super_aman_bellajar_2026"
+```
+
+### 4. Inisialisasi Database PostgreSQL
+Buat database baru bernama `bellajar_db`, lalu jalankan skrip SQL skema tabel dan *dummy data* yang tersimpan di folder `database/` melalui `psql` atau pgAdmin.
+
+### 5. Menjalankan Server Pengembangan
+```bash
+npm run dev
+```
+Buka browser dan akses **`http://localhost:3000`** 🎉
+
+---
+
+## 🧪 Pengujian & Deployment
+
+* **Linting & Pemeriksaan Kode:** Jalankan `npm run lint` untuk memastikan kualitas sintaks dan standar kode Next.js.
+* **Production Build:** Jalankan `npm run build` diikuti `npm start` untuk menguji performa aplikasi dalam mode produksi.
+* **Deployment:** Aplikasi siap di-deploy ke **Vercel** atau **Railway** dengan menghubungkan repositori GitHub dan menambahkan variabel `DATABASE_URL` serta `AUTH_SECRET` pada pengaturan *Environment Variables*.
+
+---
+
+<div align="center">
+  <p>Didesain dan dikembangkan penuh semangat untuk <strong>Universitas Hasanuddin</strong> 🎓</p>
+  <p>© 2026 <strong>Kurnia Natalia Bela (H071251040)</strong> — Tugas Final Praktikum Pemrograman Web.</p>
+</div>
