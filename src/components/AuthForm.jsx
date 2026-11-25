@@ -299,9 +299,26 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
               onChange={set('teacher_cv_url')}
               placeholder="Tempel tautan https://... atau unggah berkas di bawah"
             />
-            <div className="mt-1.5 flex flex-wrap items-center gap-2">
-              <label className="btn-outline btn-sm cursor-pointer">
-                {uploadingField === 'teacher_cv_url' ? 'Mengunggah CV...' : 'Unggah Berkas CV (PDF/Gambar)'}
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <label
+                title="Unggah Berkas CV (PDF/Gambar)"
+                aria-label="Unggah Berkas CV (PDF/Gambar)"
+                className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-2 border-brand-600 bg-white text-brand-700 shadow-xs transition hover:bg-brand-50 active:scale-[0.98]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
                 <input
                   type="file"
                   accept=".pdf,image/png,image/jpeg,image/webp"
@@ -310,6 +327,11 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
                   onChange={(e) => handleFileUpload('teacher_cv_url', e.target.files?.[0])}
                 />
               </label>
+
+              <span className="text-xs font-medium text-stone-600">
+                {uploadingField === 'teacher_cv_url' ? 'Mengunggah CV...' : 'Unggah Berkas CV (PDF/Gambar)'}
+              </span>
+
               {uploadedFlags.teacher_cv_url && (
                 <button
                   type="button"
@@ -334,9 +356,26 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
               onChange={set('teacher_portfolio_url')}
               placeholder="Tempel tautan https://... atau unggah berkas di bawah"
             />
-            <div className="mt-1.5 flex flex-wrap items-center gap-2">
-              <label className="btn-outline btn-sm cursor-pointer">
-                {uploadingField === 'teacher_portfolio_url' ? 'Mengunggah Portofolio...' : 'Unggah Berkas Portofolio (PDF/Gambar)'}
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <label
+                title="Unggah Berkas Portofolio (PDF/Gambar)"
+                aria-label="Unggah Berkas Portofolio (PDF/Gambar)"
+                className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border-2 border-brand-600 bg-white text-brand-700 shadow-xs transition hover:bg-brand-50 active:scale-[0.98]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
                 <input
                   type="file"
                   accept=".pdf,image/png,image/jpeg,image/webp"
@@ -345,6 +384,11 @@ export default function AuthForm({ mode, as = 'student', next = '/' }) {
                   onChange={(e) => handleFileUpload('teacher_portfolio_url', e.target.files?.[0])}
                 />
               </label>
+
+              <span className="text-xs font-medium text-stone-600">
+                {uploadingField === 'teacher_portfolio_url' ? 'Mengunggah Portofolio...' : 'Unggah Berkas Portofolio (PDF/Gambar)'}
+              </span>
+
               {uploadedFlags.teacher_portfolio_url && (
                 <button
                   type="button"

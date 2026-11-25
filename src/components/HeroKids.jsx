@@ -77,7 +77,7 @@ function Kid({ x, y, s, shirt, pants, hair, style, skin = '#ffd2b0', wave = 'rig
 export default function HeroKids() {
   const custom = fs.existsSync(path.join(process.cwd(), 'public', 'images', 'hero-kids.png'));
   if (custom) {
-    return <img src="/images/hero-kids.png" alt="Anak-anak belajar bersama BELLAJAR" className="mx-auto w-full max-w-lg" />;
+    return <img src="/images/hero-kids.png" alt="Anak-anak belajar bersama BELLAJAR" className="mx-auto w-full max-w-lg hover:scale-110 transition-transform" />;
   }
 
   return (

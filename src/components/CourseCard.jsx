@@ -10,7 +10,7 @@ export default function CourseCard({ course, loggedIn, canEnroll = true }) {
   const theme = courseTheme(course);
 
   return (
-    <article className="card group flex flex-col overflow-hidden transition-all hover:-translate-y-1">
+    <article className="card group flex flex-col overflow-hidden transition-all hover:-translate-y-4">
       {/* Poin 2: Area gambar/logo atas dibuat lebih lebar ke bawah untuk mengurangi whitespace */}
       <div className={`relative flex h-44 sm:h-48 w-full items-center justify-center bg-gradient-to-br ${theme.gradient} p-4`}>
         {theme.image ? (

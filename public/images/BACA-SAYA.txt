@@ -1,4 +1,0 @@
-Opsional: taruh gambar asli Anda di sini, maka otomatis dipakai menggantikan versi bawaan.
-  hero-kids.png  -> ilustrasi anak-anak di hero beranda (PNG transparan, rasio sekitar 2:1)
-  logo.png       -> logo BELLAJAR di navbar, footer, login, register, sertifikat
-Hapus file-nya untuk kembali ke versi bawaan. Restart `npm run dev` setelah menambah/menghapus file.

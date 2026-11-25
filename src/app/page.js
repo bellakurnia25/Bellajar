@@ -270,7 +270,7 @@ export default async function HomePage({ searchParams }) {
         <div className="mx-auto grid max-w-7xl items-end gap-2 px-4 sm:px-5 lg:grid-cols-[1.15fr_1fr]">
           <div className="relative z-10 pb-8 pt-10 sm:pt-14 lg:pb-14">
             {user && (
-              <div className="mb-3 inline-flex items-center gap-2 rounded-lg bg-white/95 px-4 py-1.5 text-2xl font-extrabold text-brand-700 shadow-md">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-3xl bg-white/95 px-4 py-1.5 text-2xl font-extrabold text-brand-700 shadow-md">
                 Halo, {user.username}! 
               </div>
             )}
