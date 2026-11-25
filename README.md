@@ -2,7 +2,7 @@
 
   <!-- 🖼️ LOGO WEB BELLAJAR (Sesuaikan nama file & ekstensi dengan file gambarmu) -->
 <img src="./public/images/logo.png" alt="Logo BELLAJAR" width="220" />
-<img width="938" height="229" alt="Screenshot 2026-11-25 161619" src="https://github.com/user-attachments/assets/4d0e3292-1282-49fa-b947-5c6ea8802c56" />
+<img width="2106" height="512" alt="Gemini_Generated_Image_xjvkdzxjvkdzxjvk" src="https://github.com/user-attachments/assets/37702c19-02dd-4adf-95dc-e7a9cb075728" />
 
 ---
 
