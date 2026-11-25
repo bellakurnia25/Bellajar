@@ -6,6 +6,7 @@ import { getCourses, getContents } from '@/lib/queries';
 import { toId } from '@/lib/http';
 import { pct, accessStatus, accessLabel, formatDate } from '@/lib/utils';
 import { toYoutubeEmbedUrl } from '@/lib/youtube';
+import { issueCertificate } from '@/lib/certificates';
 import ProgressBar from '@/components/ProgressBar';
 import EnrollButton from '@/components/EnrollButton';
 import MarkDoneButton from '@/components/MarkDoneButton';
@@ -42,6 +43,7 @@ export default async function CoursePage({ params, searchParams }) {
           <div className="mb-3 flex flex-wrap gap-2">
             {course.category_name && <span className="badge-amber">{course.category_name}</span>}
             <span className="badge-stone">{accessLabel(course)}</span>
+            {!course.is_finalized && <span className="badge-amber">Materi Masih Berlanjut</span>}
           </div>
           <h1 className="text-3xl sm:text-4xl">{course.title}</h1>
           <p className="mt-4 whitespace-pre-line text-stone-700">{course.description}</p>
@@ -123,10 +125,17 @@ export default async function CoursePage({ params, searchParams }) {
     activeIndex > 0 &&
     contents.slice(0, activeIndex).some((prev) => !completed.has(prev.id));
 
-  const certificate =
-    enrollment && percent === 100
-      ? await queryOne('SELECT certificate_code FROM certificates WHERE user_id = $1 AND course_id = $2', [user.id, courseId])
-      : null;
+  let certificate = null;
+  if (enrollment && percent === 100 && course.is_finalized) {
+    certificate = await queryOne(
+      'SELECT certificate_code FROM certificates WHERE user_id = $1 AND course_id = $2',
+      [user.id, courseId]
+    );
+    if (!certificate) {
+      const code = await issueCertificate(user.id, courseId);
+      if (code) certificate = { certificate_code: code };
+    }
+  }
 
   const discussions = active
     ? await query(
@@ -146,6 +155,15 @@ export default async function CoursePage({ params, searchParams }) {
         <h1 className="mt-1 text-2xl text-white sm:text-3xl">{course.title}</h1>
         <p className="text-sm font-medium text-white/95">Pengajar: {course.teacher_name}</p>
       </div>
+
+      {enrollment && percent === 100 && !course.is_finalized && (
+        <div className="rounded-3xl border border-amber-300 bg-amber-100 px-5 py-4 text-sm text-amber-900 shadow-sm">
+          <p className="font-bold">Kamu telah menyelesaikan semua bab yang tersedia saat ini.</p>
+          <p className="mt-0.5">
+            Pengajar masih menandai penyusunan materi kursus ini sebagai berlanjut. Sertifikat kelulusanmu akan otomatis aktif setelah pengajar memfiksasi seluruh daftar bab.
+          </p>
+        </div>
+      )}
 
       {certificate && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-emerald-300 bg-emerald-100 px-5 py-4 text-emerald-700 shadow-sm">
@@ -207,7 +225,7 @@ export default async function CoursePage({ params, searchParams }) {
                             : 'bg-stone-200 text-stone-600'
                         }`}
                       >
-                        {done ? '✓' : stepLocked ? '🔒' : i + 1}
+                        {done ? '✓' : stepLocked ? '!' : i + 1}
                       </span>
                       <span className="flex-1">{c.title}</span>
                     </Link>
@@ -230,7 +248,7 @@ export default async function CoursePage({ params, searchParams }) {
 
                 {isLocked && (
                   <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
-                    ⚠️ Tidak dapat menyelesaikan bab ini jika bab sebelumnya belum diselesaikan. Selesaikan bab secara berurutan mulai dari bab pertama.
+                    Tidak dapat menyelesaikan bab ini jika bab sebelumnya belum diselesaikan. Selesaikan bab secara berurutan mulai dari bab pertama.
                   </div>
                 )}
 

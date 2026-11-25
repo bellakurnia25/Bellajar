@@ -13,7 +13,10 @@ export default async function ManageContentsPage({ params }) {
   const courseId = toId((await params).id);
   if (!courseId) notFound();
 
-  const course = await queryOne('SELECT id, title, teacher_id FROM courses WHERE id = $1', [courseId]);
+  const course = await queryOne(
+    'SELECT id, title, teacher_id, is_finalized FROM courses WHERE id = $1',
+    [courseId]
+  );
   if (!course) notFound();
   if (user.role !== 'admin' && course.teacher_id !== user.id) redirect('/manage/courses');
 
@@ -22,11 +25,17 @@ export default async function ManageContentsPage({ params }) {
   return (
     <div className="page space-y-6">
       <div>
-        <Link href="/manage/courses" className="text-sm font-bold text-brand-700 hover:underline">← Kembali ke daftar kursus</Link>
+        <Link href="/manage/courses" className="text-sm font-bold text-brand-700 hover:underline">
+          ← Kembali ke daftar kursus
+        </Link>
         <h1 className="mt-1 text-3xl">Materi: {course.title}</h1>
         <p className="text-stone-600">Atur urutan bab dengan kolom “Urutan”. Bab ditampilkan dari angka terkecil.</p>
       </div>
-      <ContentManager courseId={course.id} contents={contents} />
+      <ContentManager
+        courseId={course.id}
+        contents={contents}
+        isFinalized={Boolean(course.is_finalized)}
+      />
     </div>
   );
 }

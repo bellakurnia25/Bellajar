@@ -1,7 +1,7 @@
 import { query } from './db';
 
 const COURSE_BASE = `
-SELECT c.id, c.title, c.description, c.category_id, c.teacher_id,
+SELECT c.id, c.title, c.description, c.category_id, c.teacher_id, c.is_finalized,
   to_char(c.start_date, 'YYYY-MM-DD') AS start_date,
   to_char(c.end_date, 'YYYY-MM-DD')   AS end_date,
   cat.name AS category_name,

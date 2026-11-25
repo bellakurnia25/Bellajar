@@ -8,15 +8,22 @@ export async function POST(req, { params }) {
   const { user, res } = await guard(canManageCourses);
   if (res) return res;
   const courseId = toId((await params).id);
-  const { res: r2 } = await getEditableCourse(courseId, user);
+  const { course, res: r2 } = await getEditableCourse(courseId, user);
   if (r2) return r2;
+
+  if (course.is_finalized) {
+    return fail('Daftar bab sudah difiksasi dan tidak dapat ditambahkan lagi.', 403);
+  }
 
   const { data, error } = parseContent(await readJson(req));
   if (error) return fail(error);
 
   let order = data.order_index;
   if (!order) {
-    const max = await queryOne('SELECT COALESCE(MAX(order_index), 0)::int AS m FROM contents WHERE course_id = $1', [courseId]);
+    const max = await queryOne(
+      'SELECT COALESCE(MAX(order_index), 0)::int AS m FROM contents WHERE course_id = $1',
+      [courseId]
+    );
     order = max.m + 1;
   }
 

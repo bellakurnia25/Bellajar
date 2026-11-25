@@ -14,7 +14,9 @@ export async function POST(_req, { params }) {
   if (!content) return fail('Materi tidak ditemukan.', 404);
 
   const course = await queryOne(
-    `SELECT to_char(start_date, 'YYYY-MM-DD') AS start_date, to_char(end_date, 'YYYY-MM-DD') AS end_date
+    `SELECT is_finalized,
+            to_char(start_date, 'YYYY-MM-DD') AS start_date,
+            to_char(end_date, 'YYYY-MM-DD') AS end_date
      FROM courses WHERE id = $1`,
     [content.course_id]
   );
@@ -26,7 +28,6 @@ export async function POST(_req, { params }) {
   );
   if (!enrollment) return fail('Ikuti kursus ini terlebih dahulu.', 403);
 
-  // Periksa urutan bab agar tidak ada bab sebelumnya yang dilangkahi (poin 9)
   const orderedContents = await query(
     'SELECT id FROM contents WHERE course_id = $1 ORDER BY order_index ASC, id ASC',
     [content.course_id]
@@ -57,7 +58,7 @@ export async function POST(_req, { params }) {
   );
 
   let certificateCode = null;
-  if (progress.total > 0 && progress.done >= progress.total) {
+  if (course.is_finalized && progress.total > 0 && progress.done >= progress.total) {
     certificateCode = await issueCertificate(user.id, content.course_id);
   }
   return ok({ done: progress.done, total: progress.total, certificateCode });
