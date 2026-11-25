@@ -4,7 +4,7 @@
 <img src="./public/images/logo.png" alt="Logo BELLAJAR" width="220" />
 <img width="938" height="229" alt="Screenshot 2026-11-25 161619" src="https://github.com/user-attachments/assets/4d0e3292-1282-49fa-b947-5c6ea8802c56" />
 
-
+---
 
   <p>
     <img src="https://img.shields.io/badge/Next.js-App_Router-black?style=for-the-badge&logo=next.js" alt="Next.js" />
