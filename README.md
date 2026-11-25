@@ -1,7 +1,7 @@
 <div align="center">
 
   <!-- 🖼️ LOGO WEB BELLAJAR (Sesuaikan nama file & ekstensi dengan file gambarmu) -->
-<img width="245" height="89" alt="logo" src="https://github.com/user-attachments/assets/0a2d671d-f366-45b3-ac2d-ae72eb500167" />
+<img src="./public/images/logo-bellajar.png" alt="Logo BELLAJAR" width="220" />
 
   <h1>BELLAJAR 🚀✨</h1>
   <p><strong>Platform Kursus Daring Interaktif &amp; Ceria untuk Anak Usia 5–12 Tahun</strong></p>
@@ -27,7 +27,6 @@
 - [👩‍💻 Pengembang](#-pengembang)
 - [✨ Fitur Utama & Implementasi Teknis](#-fitur-utama--implementasi-teknis)
 - [🗺️ Alur Pengguna (User Flow)](#️-alur-pengguna-user-flow)
-- [⚙️ Flowchart Sistem](#️-flowchart-sistem)
 - [🗄️ Skema Database & ERD](#️-skema-database--erd)
 - [📂 Struktur Direktori](#-struktur-direktori)
 - [🌐 API Endpoints Utama](#-api-endpoints-utama)
@@ -72,25 +71,19 @@ Proyek ini dirancang dan dikembangkan secara penuh menggunakan siklus pengembang
 ## 🗺️ Alur Pengguna (User Flow)
 
 <div align="center">
-  <img src="./public/images/docs/user-flow-bellajar.png" alt="User Flow BELLAJAR" width="100%" />
+<img width="6370" height="6467" alt="BELLAJAR_User_Flow" src="https://github.com/user-attachments/assets/0d44e38b-8bfd-441f-9481-c2742e5b0ac1" />
 </div>
 
 ---
 
-## ⚙️ Flowchart Sistem
-
-<div align="center">
-  <img src="./public/images/docs/flowchart-bellajar.png" alt="Flowchart Sistem BELLAJAR" width="100%" />
-</div>
-
----
 
 ## 🗄️ Skema Database & ERD
 
 Sistem basis data **BELLAJAR** menggunakan **PostgreSQL** dengan **8 tabel relasional** yang ternormalisasi (`users`, `teacher_applications`, `categories`, `courses`, `contents`, `enrollments`, `discussions`, dan `certificates`).
 
 <div align="center">
-  <img src="./public/images/docs/erd-bellajar.png" alt="ERD Database BELLAJAR" width="100%" />
+<img width="7928" height="4163" alt="BELLAJAR_ERD" src="https://github.com/user-attachments/assets/258da205-8b0f-4cbb-9e27-b76f7ae292e7" />
+
 </div>
 
 ---
