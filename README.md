@@ -2,8 +2,8 @@
 
   <!-- 🖼️ LOGO WEB BELLAJAR (Sesuaikan nama file & ekstensi dengan file gambarmu) -->
 <img src="./public/images/logo.png" alt="Logo BELLAJAR" width="220" />
+<img width="938" height="358" alt="Screenshot 2026-11-25 161619" src="https://github.com/user-attachments/assets/966b4787-9244-4f7b-ab6c-e228a318d1a0" />
 
-  <h1>BELLAJAR 🚀✨</h1>
   <p><strong>Platform Kursus Daring Interaktif &amp; Ceria untuk Anak Usia 5–12 Tahun</strong></p>
 
   <p>
