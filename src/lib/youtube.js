@@ -31,10 +31,6 @@ export function extractYoutubeId(url) {
   return null;
 }
 
-export function isYoutubeUrl(url) {
-  return Boolean(extractYoutubeId(url));
-}
-
 export function toYoutubeEmbedUrl(url) {
   const id = extractYoutubeId(url);
   return id ? `https://www.youtube-nocookie.com/embed/${id}?rel=0` : null;

@@ -48,7 +48,6 @@ export default async function CertificatePage({ params }) {
 
           {/* 2. Isi Teks Dinamis di Atas Gambar */}
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-between px-14 py-8 text-center sm:px-24 sm:py-12">
-            
             {/* Bagian Atas: Logo & Judul */}
             <div className="flex flex-col items-center">
               <Logo size="lg" />
